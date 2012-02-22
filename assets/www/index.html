@@ -30,6 +30,7 @@
     	<script type="text/javascript" charset="utf-8" src="Javascripts/addexpenses.js"></script>
     	<script type="text/javascript" charset="utf-8" src="Javascripts/viewexpenses.js"></script>
 
+<!-- CSS -->
         <link rel="stylesheet" href="Stylesheets/jquery.mobile-1.0.1.min.css" />
         <!-- link rel="stylesheet" href="Stylesheets/jquery.keypad.css" / -->
         <link rel="stylesheet" href="Stylesheets/jquery.mobile.datebox-1.0.1.min.css" />
@@ -37,7 +38,7 @@
         <!-- link rel="stylesheet" href="Stylesheets/styles.css" / -->
         
         <link class="include" rel="stylesheet" type="text/css" href="Stylesheets/jquery.jqplot.min.css" />
-	    <link rel="stylesheet" type="text/css" href="Stylesheets/examples.min.css" />
+	    <!-- link rel="stylesheet" type="text/css" href="Stylesheets/examples.min.css" / -->
 	    <link type="text/css" rel="stylesheet" href="Stylesheets/shCoreDefault.min.css" />
 	    <link type="text/css" rel="stylesheet" href="Stylesheets/shThemejqPlot.min.css" />
         
@@ -47,8 +48,8 @@
 <body onLoad = "onBodyLoad()">
 
 
-
 	<div class="ui-body ui-body-b">
+		
 		<div data-role="header">
 				<div data-role="navbar">
 					<ul>
@@ -59,6 +60,7 @@
 				</div><!-- /navbar -->
 		
 		</div>
+    	
     	<div id="newExpenseform">
 
 			<h2>Δώστε στοιχεία εξόδου</h2>
@@ -80,35 +82,34 @@
 				</div>
 
 			   	<fieldset class="ui-grid-a">
-			  		<div class="ui-block-f"><input id="expense_submit" type="submit" value="Καταχώρηση" onClick="newExpense()" data-theme ="f"/></div>
+			  		<div class="ui-block-a"><input id="expense_submit" type="submit" value="Καταχώρηση" onClick="newExpense()" data-theme ="f" /></div>
 		    	</fieldset>
 		</div>
-
-    	<div id="viewoptions">
-
-				<label for="view" class="view">Είδος πληροφορίας:</label>
-				<select name="view" id="expense_view" data-theme="a">
-					<option value="01">Αναλυτικά - Όλα τα έξοδα</option>
-					<option value="02">Αναλυτικά - Έξοδα έτους</option>
-					<option value="03">Αναλυτικά - Έξοδα μήνα</option>
-					<option value="04">Αναλυτικά - Έξοδα εβδομάδας</option>
-					<option value="05">Στατιστικά - Όλα τα έξοδα</option>
-					<option value="06">Στατιστικά - Έξοδα έτους</option>
-					<option value="07">Στατιστικά - Έξοδα μήνα</option>
-					<option value="08">Στατιστικά - Έξοδα εβδομάδας</option>
-				</select>
-		<!-- /form -->
-		</div>
-	
 
 	</div>
 
 	<div id="busy"/>Καταχώρηση...</div>
 	</div>
 	
-	<div id="chart1" style="margin-top:20px; margin-left:20px; width:300px; height:300px;"></div>
+	<div id="views">
+		<div data-role="navbar">
+			<ul>
+				<li><a href="javascript:viewExpenses()" class="ui-btn-active" id="perday">Ανα ημέρα</a></li>
+				<li><a href="javascript:viewExpenses()" id="percategory">Ανα κατηγορία</a></li>
+				<li><a href="javascript:viewExpenses()" id="statistics">Στατιστικά</a></li>
+			</ul>
+		</div><!-- /navbar -->
+		<div data-role="navbar" data-theme='a'>
+			<ul>
+				<li><a href="javascript:viewExpenses()" id="WTD">Εβδομάδα</a></li>
+				<li><a href="javascript:viewExpenses()" id="MTD">Μήνας</a></li>
+				<li><a href="javascript:viewExpenses()" id="YTD">Έτος</a></li>
+				<li><a href="javascript:viewExpenses()" id="ALL" class="ui-btn-active">Όλα</a></li>
+			</ul>
+		</div><!-- /navbar -->
 
-	<!-- div data-role="page" class="type-index" -->
+		<div id="chart1" style="margin-top:20px; margin-left:20px; width:300px; height:300px;"></div>
+
 
 		<div data-role="content" data-theme="e" class="type-index">
 
@@ -116,8 +117,9 @@
 					</ul>
 	
 		</div>
+		
 
-	<!-- /div -->
+	</div>
 	
 	
 </body>

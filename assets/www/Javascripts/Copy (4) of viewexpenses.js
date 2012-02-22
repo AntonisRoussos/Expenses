@@ -43,45 +43,7 @@ function getExpenses(tx) {
     $('#expenseList').hide();
     $('#chart1').show();
   	var timeStr;
-   	if ($('#statistics').hasClass('ui-btn-active')) 
-  		{
-  		if ($('#ALL').hasClass('ui-btn-active')) 
-  			{view = '09'}
-  		else
-  			{
-  			if ($('#YTD').hasClass('ui-btn-active')) 
-  				{view = '10'}
-  			else
-	  			{
-	  			if ($('#MTD').hasClass('ui-btn-active')) 
-	  				{view = '11'}
-	  			else
-		  			{view = '09'}
-				}
-			}
-		}	
-
-  	if ($('#perday').hasClass('ui-btn-active')) 
-  		{
-  		if ($('#ALL').hasClass('ui-btn-active')) 
-  			{view = '01'}
-  		else
-  			{
-  			if ($('#YTD').hasClass('ui-btn-active')) 
-  				{view = '02'}
-  			else
-	  			{
-	  			if ($('#MTD').hasClass('ui-btn-active')) 
-	  				{view = '03'}
-	  			else
-		  			{view = '04'}
-				}
-			}
-		}	
-
- 		
-//  	view = $("#expense_view").val();
-alert(view);
+  	view = $("#expense_view").val();
   	switch (view)
 	{
 	case '01':
@@ -106,18 +68,6 @@ alert(view);
 		timeStr = 'dateOccured >="' + MTDstart + '" and dateOccured <= "' + today +'"';   
 	  	break;
 	case '08':
-		timeStr = 'dateOccured >="' + WTDstart + '" and dateOccured <= "' + today +'"';   
-	  	break;
-	case '09':
-		timeStr = 'dateOccured >= "1900/01/01" and dateOccured <= "' + today +'"';   
-	  	break;
-	case '10':
-		timeStr = 'dateOccured >="' + YTDstart + '" and dateOccured <= "' + today +'"';   
-	  	break;
-	case '11':
-		timeStr = 'dateOccured >="' + MTDstart + '" and dateOccured <= "' + today +'"';   
-	  	break;
-	case '12':
 		timeStr = 'dateOccured >="' + WTDstart + '" and dateOccured <= "' + today +'"';   
 	  	break;
 	}
@@ -168,7 +118,6 @@ alert(view);
  function getExpensesList_success(tx, results) {
 	$('#busy').hide();
 	$('#newExpenseform').hide();
-    $('#views').show();
 	$('#chart1').hide();
     $('#expenseList').show();
 //	$('#menu').hide();
