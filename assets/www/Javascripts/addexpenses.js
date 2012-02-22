@@ -25,6 +25,7 @@ function onBodyLoad(){
 	var now = new Date();
 	var today = now.format("dd/mm/yyyy").toString();
 	$('#busy').hide();
+	$('#viewoptions').hide();
 	$('#expense_date').trigger('datebox', {'method':'set', 'value':today});
 //	$('#expense_amount').keypad();
 //	$('#expense_amount').keypad('show');

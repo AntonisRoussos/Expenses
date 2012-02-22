@@ -21,6 +21,8 @@ function populateDB_success() {
 
 function viewExpenses() {
 //	dateFormat();
+	$('#viewoptions').show();
+	$('#newExpenseform').hide();
     now = new Date();
 	today = now.format("yyyy/mm/dd").toString();
 	var currentMonth = now.getMonth()+1;
@@ -90,7 +92,7 @@ function getExpenses(tx) {
 	    data[0].push([categoryCount.b, categoryCount.a]);
     }
     $.jqplot.config.enablePlugins = true;
-    $('#form').hide();
+    $('#newExpenseform').hide();
     $('#chart1').empty();
     var plot1 = $.jqplot('chart1', data, {
 	    title: 'Κατηγορίες Εξόδων',
@@ -115,7 +117,7 @@ function getExpenses(tx) {
 
  function getExpensesList_success(tx, results) {
 	$('#busy').hide();
-	$('#form').hide();
+	$('#newExpenseform').hide();
 	$('#chart1').hide();
     $('#expenseList').show();
 //	$('#menu').hide();
@@ -180,5 +182,5 @@ function getExpenses(tx) {
  }
 
  function showForm() {
-     $('#form').show();
+     $('#newExpenseform').show();
  }
