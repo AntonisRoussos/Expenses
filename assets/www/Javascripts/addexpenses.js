@@ -70,7 +70,7 @@ function populateDB_success() {
 
 function populateDB(tx) {
 //	tx.executeSql('DROP TABLE IF EXISTS expense');
-	$('#busy').show();
+//	$('#busy').show();
 	var sql = 
 		"CREATE TABLE IF NOT EXISTS expense ( "+
 		"sn INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -97,7 +97,7 @@ function populateDB(tx) {
     tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('05','Family','Οικογένεια','.\Images\Kids.jpg')");
     tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('06','Personal','Προσωπικά','.\Images\Personal.jpg')");
     tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('07','Entertainment','Διασκέδαση','.\Images\Entertainment.jpg')");
-    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('08 ','Medical','Ιατρικά','.\Images\Entertainment.jpg')");
+    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('08','Medical','Ιατρικά','.\Images\Entertainment.jpg')");
     
 	tx.executeSql('DROP TABLE IF EXISTS subcategory');
 	var sql = 

@@ -84,6 +84,7 @@ function getExpenses(tx) {
 	var sql;
 	if (view > '04')
 		{ 
+		$('.type-index').hide();
 	    $('#expenseList').hide();
 	    $('#chart1').show();
  		$('#toggleView').hide();
@@ -93,6 +94,7 @@ function getExpenses(tx) {
 		}
  	else
  		{
+		$('.type-index').show();
 	    $('#expenseList').show();
 	    $('#chart1').hide();
  		$('#toggleViewStats').hide();
@@ -152,12 +154,13 @@ function getExpenses(tx) {
 		        // Make this a pie chart.
 		        renderer: jQuery.jqplot.PieRenderer, 
 		        rendererOptions: {
+		          diameter: 200,
 		          // Put data labels on the pie slices.
 		          // By default, labels show the percentage of the slice.
 		          showDataLabels: true
 		        }
 		      }, 
-		      legend: { show:true, location: 's' }
+		      legend: { show:true, location: 'e' }
 		    });
 		}    
  }
@@ -168,6 +171,7 @@ function getExpenses(tx) {
 	$('#newExpenseform').hide();
     $('#views').show();
 	$('#chart1').hide();
+    $('.type-index').show();
     $('#expenseList').show();
 //	$('#menu').hide();
 	var wdateOccured = '9999/99/99';
