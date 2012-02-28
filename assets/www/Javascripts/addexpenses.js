@@ -16,7 +16,7 @@ function onDeviceReady() {
     	{}
     else
     	{db.transaction(populateDB, transaction_error, populateDB_success);
-	     db.transaction(getCategories, transaction_error, populateDB_success);
+/*	     db.transaction(getCategories, transaction_error, populateDB_success); */
     	};
 }
 
@@ -29,7 +29,34 @@ function onBodyLoad(){
 	$('#expense_date').trigger('datebox', {'method':'set', 'value':today});
 //	$('#expense_amount').keypad();
 //	$('#expense_amount').keypad('show');
-}
+	$('.Selectview').change(function() {viewExpenses()});
+	$("#toggleView").val('perDay');
+	$("#toggleView").empty().append('Click εδώ για Έξοδα / Kατηγορία');
+	$('#toggleView').toggle(
+		function() {
+		  $("#toggleView").val('perCategory');
+		  viewExpenses();
+		  $("#toggleView").empty().append('Click εδώ για Έξοδα / Ημέρα');
+		}, 
+		function() {
+		  $("#toggleView").val('perDay');
+		  viewExpenses();
+		  $("#toggleView").empty().append('Click εδώ για Έξοδα / Kατηγορία');
+		});
+	$("#toggleViewStats").val('BarChart');
+	$("#toggleViewStats").empty().append('Click εδώ για Διάγραμμα πίτας');
+	$('#toggleViewStats').toggle(
+		function() {
+		  $("#toggleViewStats").val('PieChart');
+		  viewExpenses();
+		  $("#toggleViewStats").empty().append('Click εδώ για Ραβδόγραμμα');
+		}, 
+		function() {
+		  $("#toggleViewStats").val('BarChart');
+		  viewExpenses();
+		  $("#toggleViewStats").empty().append('Click εδώ για Διάγραμμα πίτας');
+		});
+	}
 
 function transaction_error(tx, error) {
 	$('#busy').hide();
@@ -43,6 +70,7 @@ function populateDB_success() {
 
 function populateDB(tx) {
 //	tx.executeSql('DROP TABLE IF EXISTS expense');
+	$('#busy').show();
 	var sql = 
 		"CREATE TABLE IF NOT EXISTS expense ( "+
 		"sn INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -87,19 +115,22 @@ function populateDB(tx) {
 		{alert('Μη επιτρεπτό ποσό');}
 	else
 		{	
-		$('#busy').show();
 //		$('#expense_amount').keypad('hide');
 //		$('#expense_category').hide();
-		$('#expense_date').hide();
+//		$('#expense_date').hide();
+//		$('#views').hide();
 	  	db.transaction(addExpense, transaction_error, populateDB_success);
   		};
-  	location.reload();
+//  	location.reload();
+		$("#expense_amount").val("");
+		showForm();
  }
 
  function addExpense(tx) {
     var originaldate = $('input:[name*="date"]').val();
     date = originaldate.substring(6,10) + "/" + originaldate.substring(3,5) + "/" + originaldate.substring(0,2);
 	category = $("#expense_category").val();
+	$('#busy').show();
     tx.executeSql("INSERT INTO expense (amount, dateOccured, category, subcategory) VALUES ("+amount+",'"+date+"','"+category+"', '0101')");
  }
  

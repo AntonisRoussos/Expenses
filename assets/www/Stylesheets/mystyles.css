@@ -1,0 +1,21 @@
+*
+#busy {
+	position: absolute;
+	top: 50%;
+ 	left: 50%;
+	margin-left: -65px;
+	margin-top: -31px;
+	color: #FFFFFF;
+	font-size: 24px;	
+	z-index:6;
+	background-color: #000000;
+	opacity:0.5;
+ 	width:100px;
+	height:32px;
+	padding: 30px;
+	-moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -khtml-border-radius: 10px;
+    border-radius: 10px;
+	
+}
