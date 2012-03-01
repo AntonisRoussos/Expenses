@@ -49,84 +49,108 @@
 
 <body onLoad = "onBodyLoad()">
 
-	<div class="ui-body ui-body-b">
-		<div data-role="header">
-				<div data-role="navbar">
-					<ul>
-						<li><a href="javascript:showForm()" class="ui-btn-active">Νέο έξοδο</a></li>
-						<li><a href="javascript:viewExpenses()">Πληροφορίες</a></li>
-						<li><a href="javascript:deleteExpensesAll()">Διαγραφή</a></li>
-					</ul>
-				</div><!-- /navbar -->
-
-		</div>
-
-    	<div id="newExpenseform">
-
-			<h2>Δώστε στοιχεία εξόδου</h2>
-
-		<!-- form id="expense" onSubmit="JavaScript:handleClick()" -->
-
-			<!-- label for="expense_amount" class="ui-hidden-accessible" --><!-- /label -->
-			<!-- input type="text" id="expense_amount"  maxlength="8" name="amount" placeholder="Ποσό ...." size="8" data-theme="d" / -->
-			<label for="expense_amount">Ποσό:</label>
-			<input type="number" id="expense_amount" class="amount" name="amount" /><br>
-
-			<label for="category" class="select">Είδος Εξόδου:</label>
-			<select name="category" id="expense_category">
-				<option value="01">Super Market</option>
-				<option value="02">Εμφάνιση</option>
-				<option value="03">Σπίτι</option>
-				<option value="04">Οχήματα</option>
-				<option value="05">Οικογένεια</option>
-				<option value="06">Προσωπικά</option>
-				<option value="07">Διασκέδαση</option>
-				<option value="08">Ιατρικά</option>
-			</select>
-
-			<div data-role="fieldcontain">
-				<label for="expense_date">Ημερομηνία:</label><input name="date" type="date" id="expense_date" data-role="datebox" data-options='{"mode": "datebox", "disableManualInput": true}' />
-			</div>
-
-		   	<fieldset class="ui-grid-a">
-		  		<div class="ui-block-f"><input id="expense_submit" type="submit" value="Καταχώρηση" onClick="newExpense()" data-theme ="f"/></div>
-	    	</fieldset>
-			
-			<div id="busy"/>Καταχώρηση...</div>
-
-		</div>
-
-    	<div id="views">
-			
-			<div id="toggleView" data-role="button">
-			</div>
-
-			<div id="toggleViewStats" data-role="button">
-			</div>
-
-	    	<div id="viewoptions">
+	<div data-role="page" id="homepage"> 
+		<div class="ui-body ui-body-b">
+			<div data-role="header" data-position="fixed">
+				<h1>Έξοδα</h1>
+				<a href="#settings" data-icon="gear" class="ui-btn-right">Ρυθμίσεις</a>
+					<div data-role="navbar">
+						<ul>
+							<li><a href="javascript:showForm('expense')" data-icon="minus" class="ui-btn-active red">Έξοδο</a></li>
+							<li><a href="javascript:showForm('income')" class="green" data-icon="plus">Έσοδο</a></li>
+							<li><a href="javascript:viewExpenses()" data-icon="info">Πληροφορίες</a></li>
+						</ul>
+					</div><!-- /navbar -->
+			</div><!-- /header -->
 	
-					<label for="view" class="view">Είδος πληροφορίας:</label>
-					<select name="view" id="expense_view" class="Selectview" data-theme="a">
-						<option value="01">Αναλυτικά - Όλα τα έξοδα</option>
-						<option value="02">Αναλυτικά - Έξοδα έτους</option>
-						<option value="03">Αναλυτικά - Έξοδα μήνα</option>
-						<option value="04">Αναλυτικά - Έξοδα εβδομάδας</option>
-						<option value="05">Στατιστικά - Όλα τα έξοδα</option>
-						<option value="06">Στατιστικά - Έξοδα έτους</option>
-						<option value="07">Στατιστικά - Έξοδα μήνα</option>
-						<option value="08">Στατιστικά - Έξοδα εβδομάδας</option>
+			<div data-role="content">
+	
+		    	<div id="newExpenseform">
+		
+					<h2>Δώστε στοιχεία εξόδου</h2>
+		
+				<!-- form id="expense" onSubmit="JavaScript:handleClick()" -->
+		
+					<!-- label for="expense_amount" class="ui-hidden-accessible" --><!-- /label -->
+					<!-- input type="text" id="expense_amount"  maxlength="8" name="amount" placeholder="Ποσό ...." size="8" data-theme="d" / -->
+					<label for="expense_amount">Ποσό:</label>
+					<input type="number" id="expense_amount" class="amount" name="amount" /><br>
+		
+					<label for="category" class="select">Είδος Εξόδου:</label>
+					<select name="category" id="expense_category">
+						<option value="01">Super Market</option>
+						<option value="02">Εμφάνιση</option>
+						<option value="03">Σπίτι</option>
+						<option value="04">Οχήματα</option>
+						<option value="05">Οικογένεια</option>
+						<option value="06">Προσωπικά</option>
+						<option value="07">Διασκέδαση</option>
+						<option value="08">Ιατρικά</option>
 					</select>
-			</div>
 		
-			<div id="chart1" style="margin-top:20px; margin-left:0px; width:320px; height:320px;margin-right:10px">
-			</div>
+					<div data-role="fieldcontain">
+						<label for="expense_date">Ημερομηνία:</label><input name="date" type="date" id="expense_date" data-role="datebox" data-options='{"mode": "datebox", "disableManualInput": true}' />
+					</div>
 		
-			<div data-role="content" data-theme="e" class="type-index">
-					<ul data-role="listview" id="expenseList"></ul>
+				   	<fieldset class="ui-grid-a">
+				  		<div class="ui-block-f"><input id="expense_submit" type="submit" value="Καταχώρηση" onClick="newExpense()" data-theme ="f"/></div>
+			    	</fieldset>
+					
+					<div id="busy"/>Καταχώρηση...</div>
+		
+				</div><!-- /newExpenseform -->
+		
+		    	<div id="views">
+					
+					<div id="toggleView" data-role="button">
+					</div>
+		
+					<div id="toggleViewStats" data-role="button">
+					</div>
+		
+			    	<div id="viewoptions">
+			
+							<label for="view" class="view">Είδος πληροφορίας:</label>
+							<select name="view" id="expense_view" class="Selectview" data-theme="a">
+								<option value="01">Αναλυτικά - Όλα τα έξοδα</option>
+								<option value="02">Αναλυτικά - Έξοδα έτους</option>
+								<option value="03">Αναλυτικά - Έξοδα μήνα</option>
+								<option value="04">Αναλυτικά - Έξοδα εβδομάδας</option>
+								<option value="05">Στατιστικά - Όλα τα έξοδα</option>
+								<option value="06">Στατιστικά - Έξοδα έτους</option>
+								<option value="07">Στατιστικά - Έξοδα μήνα</option>
+								<option value="08">Στατιστικά - Έξοδα εβδομάδας</option>
+							</select>
+					</div>
+				
+					<div id="chart1" style="margin-top:20px; margin-left:0px; width:320px; height:320px;margin-right:10px">
+					</div>
+				
+					<div data-role="content" data-theme="e" class="type-index">
+							<ul data-role="listview" id="expenseList"></ul>
+					</div>
+				</div><!-- /views -->
+			</div><!-- /content -->
+		</div>
+	</div><!-- /page -->
+		
+	<div data-role="page" id="settings"> 
+		<div class="ui-body ui-body-b">
+			<div data-role="header" data-position="fixed">
+				<h1>Ρυθμίσεις</h1>
+				<a href="#homepage" data-icon="back" class="ui-btn-right">Πίσω</a>
+			</div>
+	
+			<div data-role="content">
+					<a href="index.html" data-role="button">Επαναλαμβανόμενα έξοδα</a>
+					<a href="index.html" data-role="button">Προυπολογισμός μήνα</a>
+					<a href="index.html" data-role="button">Κατηγορίες εξόδων</a>
+					<a href="index.html" data-role="button">Κατηγορίες εσόδων</a>
+					<a href="index.html" data-role="button">Εφεδρεία αρχείων</a>
+					<a href="index.html" data-role="button">Ανάκτηση αρχείων</a>
+					<a href="javascript:deleteExpensesAll()" data-role="button">Διαγραφή εξόδων</a>
 			</div>
 		</div>
-
 	</div>
 
 </body>

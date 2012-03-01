@@ -111,14 +111,10 @@ function populateDB(tx) {
 
  function newExpense() {
 	amount = $('input:[name*="amount"]').val();
- 	if (amount<1 || amount>100000)
+ 	if (amount<1 || amount>100000 || !(isNumber(amount))) 
 		{alert('Μη επιτρεπτό ποσό');}
 	else
 		{	
-//		$('#expense_amount').keypad('hide');
-//		$('#expense_category').hide();
-//		$('#expense_date').hide();
-//		$('#views').hide();
 	  	db.transaction(addExpense, transaction_error, populateDB_success);
   		};
 //  	location.reload();
@@ -156,3 +152,7 @@ function getCategories_success(tx, results) {
     }
     readystatus = 'Y';
  }
+
+ function isNumber(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}

@@ -193,9 +193,12 @@ function getExpenses(tx) {
   return new Date(d.setDate(diff));
  }
 
- function showForm() {
-     $('#newExpenseform').show();
-     $('#views').hide();
+ function showForm(type) {
+    $('#views').hide();
+	if (type == 'expense')
+     	{$('#newExpenseform').show();}
+    else
+    	{$('#newIncomeform').show();}
  }
 
  function listperDay(results, len) {
