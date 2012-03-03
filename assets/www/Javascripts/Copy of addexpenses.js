@@ -5,6 +5,7 @@ var dateOccured;
 var category;
 var subcategory;
 var readystatus = null;
+var viewOption = null;
 
 document.addEventListener("deviceready", onDeviceReady, false);
 
@@ -29,38 +30,40 @@ function onBodyLoad(){
 	$('#expense_date').trigger('datebox', {'method':'set', 'value':today});
 //	$('#expense_amount').keypad();
 //	$('#expense_amount').keypad('show');
-//	$('.Selectview').change(function() {viewExpenses()});
-	$('.Selectview').change(function() {$('#information').trigger('pageshow');});
-//	$('.Selectview').change(function() {$('#info').trigger('click');});
-	$('#information').live('pageshow',function(event, ui){viewExpenses();});
+	if (viewOption == null) {viewOption = 'perDay';}; 
+	$('.Selectview').change(function() {alert('1' + viewOption); viewExpenses(viewOption);});
+//	$('.Selectview').change(function() {$('#information').trigger('pageshow');});
+	$('#information').live('pageshow',function(event, ui){viewExpenses(viewOption);});
 	$('#homepage').live('pageshow',function(event, ui){showForm('expense');});
-	$("#toggleView").empty().append('<img src="./Stylesheets/images/analysis.png">');
 	$("#toggleView").val('perDay');
-//	$("#toggleView").empty().append('Click για Έξοδα / Kατηγορία');
-//	$("#toggleView").empty().append('<a href="#" data-icon="home" data-iconpos="notext" data-direction="reverse"></a>');
+	$("#toggleView").empty().append('Click για Έξοδα / Kατηγορία');
 	$('#toggleView').toggle(
 		function() {
-		  $("#toggleView").val('perCategory');
-		  viewExpenses();
-		  $("#toggleView").empty().append('<img src="./Stylesheets/images/calendar.png">');
+//		  $("#toggleView").val('perCategory');
+		  viewOption = 'perCategory';
+		  viewExpenses(viewOption);
+		  $("#toggleView").empty().append('Click για Έξοδα / Ημέρα');
 		}, 
 		function() {
-		  $("#toggleView").val('perDay');
-		  viewExpenses();
-		  $("#toggleView").empty().append('<img src="./Stylesheets/images/analysis.png">');
+//		  $("#toggleView").val('perDay');
+		  viewOption = 'perDay';
+		  viewExpenses(viewOption);
+		  $("#toggleView").empty().append('Click για Έξοδα / Kατηγορία');
 		});
-	$("#toggleViewStats").empty().append('<img src="./Stylesheets/images/chart-pie.png">');
 	$("#toggleViewStats").val('BarChart');
+	$("#toggleViewStats").empty().append('Click για Διάγραμμα πίτας');
 	$('#toggleViewStats').toggle(
 		function() {
-		  $("#toggleViewStats").val('PieChart');
-		  viewExpenses();
-		  $("#toggleViewStats").empty().append('<img src="./Stylesheets/images/bar-chart.png">');
+//		  $("#toggleViewStats").val('PieChart');
+		  viewOption = 'PieChart';
+		  viewExpenses(viewOption);
+		  $("#toggleViewStats").empty().append('Click για Ραβδόγραμμα');
 		}, 
 		function() {
-		  $("#toggleViewStats").val('BarChart');
-		  viewExpenses();
-		  $("#toggleViewStats").empty().append('<img src="./Stylesheets/images/chart-pie.png">');
+//		  $("#toggleViewStats").val('BarChart');
+		  viewOption = 'BarChart';
+		  viewExpenses(viewOption);
+		  $("#toggleViewStats").empty().append('Click για Διάγραμμα πίτας');
 		});
 	}
 

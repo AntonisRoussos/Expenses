@@ -6,6 +6,7 @@ var today;
 var view;
 var toggleView;
 var toggleViewStats;
+var viewoption; 
 var YTDstart;
 var MTDstart;
 var WTDstart;
@@ -21,8 +22,10 @@ function populateDB_success() {
 	$('#busy').hide();
 }
 
-function viewExpenses() {
+function viewExpenses(viewOption) {
 //	dateFormat();
+	viewoption = viewOption;
+	alert(viewoption); 
 	$('#views').show();
 	$('#toggleViewStats').hide();
 	$('#toggleView').show();
@@ -48,8 +51,8 @@ function getExpenses(tx) {
   	var timeStr;
  		
   	view = $("#expense_view").val();
- 	toggleView = $("#toggleView").val();
-  	toggleViewStats = $("#toggleViewStats").val();
+// 	toggleView = $("#toggleView").val();
+// 	toggleViewStats = $("#toggleViewStats").val();
 
    	switch (view)
 	{
@@ -82,6 +85,7 @@ function getExpenses(tx) {
  // 	var sql = "select category a, count(*) b from expense where category = "+category+" and " + timeStr + " group by category"; 
 // 	var sql = "select category a, sum(amount) b from expense where " + timeStr + " group by category"; 
 	var sql;
+	alert(viewoption); 
 	if (view > '04')
 		{ 
 		$('.type-index').hide();
@@ -99,12 +103,12 @@ function getExpenses(tx) {
 	    $('#chart1').hide();
  		$('#toggleViewStats').hide();
  		$('#toggleView').show();
- 		if (toggleView == "perDay")
+ 		if (viewoption == "perDay")
  			{sql = "select x.sn, x.amount, x.dateOccured, y.elDescription, x.category, x.subcategory from expense x, category y where x.category = y.code and " + timeStr + "order by x.dateOccured desc, x.category";
 			tx.executeSql(sql, [], getExpensesList_success, transaction_error)}
 		else
 			{
- 			if (toggleView == "perCategory")
+ 			if (viewoption == "perCategory")
 	 			{sql = "select x.sn, x.amount, x.dateOccured, y.elDescription, x.category, x.subcategory from expense x, category y where x.category = y.code and " + timeStr + "order by x.category, x.dateOccured desc";
 				tx.executeSql(sql, [], getExpensesList_success, transaction_error)}
 			}
@@ -126,7 +130,7 @@ function getExpenses(tx) {
     $.jqplot.config.enablePlugins = true;
 //    $('#newExpenseform').hide();
     $('#chart1').empty();
-	if (toggleViewStats == "BarChart")
+	if (viewoption == "BarChart")
 		{
 		    /* Bar chart */
 		    var plot1 = $.jqplot('chart1', data, {
