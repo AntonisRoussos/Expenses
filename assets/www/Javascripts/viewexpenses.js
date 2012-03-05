@@ -224,7 +224,11 @@ function getExpenses(tx) {
 	    	$('#expenseList').append('<li><a href="index.html">' + expense.amount + '€    ' + expense.elDescription + '</a></li>');
     		subtotal = subtotal + expense.amount;
     		total = total + expense.amount;
-    		if (i == len - 1) {$('#expenseList').append('<li>' + total + '€ : Γενικό Σύνολο</li>')};
+    		if (i == len - 1) 
+    			{
+    			$('#expenseList').append('<li>' + subtotal + '€ : Σύνολο Ημέρας</li>');
+    			$('#expenseList').append('<li>' + total + '€ : Γενικό Σύνολο</li>');
+    			};
  	    	}
  }
  

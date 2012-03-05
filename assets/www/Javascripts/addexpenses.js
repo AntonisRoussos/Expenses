@@ -3,6 +3,7 @@ var dbCreated = false;
 var amount;
 var dateOccured; 
 var category;
+var lenCategory;
 var subcategory;
 var readystatus = null;
 
@@ -86,26 +87,34 @@ function populateDB(tx) {
 		"subcategory VARCHAR(2))"; 
     tx.executeSql(sql);
     
-    tx.executeSql('DROP TABLE IF EXISTS category');
-	var sql = 
-		"CREATE TABLE IF NOT EXISTS category ( "+
-		"code VARCHAR(2) PRIMARY KEY, " +
-		"enDescription VARCHAR(15), " +
-		"elDescription VARCHAR(15), " +
-		"image VARCHAR(50))";
-    tx.executeSql(sql);
-
-
-    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('01','Grocery','Super Market','.\Images\Super.jpg')");
-    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('02','Appearence','Εμφάνιση','.\Images\Clothing.jpg')");
-    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('03','House','Σπίτι','.\Images\House.jpg')");
-    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('04','Vehicles','Οχήματα','.\Images\Car.jpg')");
-    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('05','Family','Οικογένεια','.\Images\Kids.jpg')");
-    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('06','Personal','Προσωπικά','.\Images\Personal.jpg')");
-    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('07','Entertainment','Διασκέδαση','.\Images\Entertainment.jpg')");
-    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('08','Medical','Ιατρικά','.\Images\Entertainment.jpg')");
     
-	tx.executeSql('DROP TABLE IF EXISTS subcategory');
+//	var sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='category'";
+//    tx.executeSql(sql, [], checkTableExists_success, transaction_error);
+    
+//    alert(lenCategory);
+    
+//    if (lenCategory == 0)
+//    	{
+	    tx.executeSql('DROP TABLE IF EXISTS category');
+		var sql = 
+			"CREATE TABLE IF NOT EXISTS category ( "+
+			"code VARCHAR(2) PRIMARY KEY, " +
+			"enDescription VARCHAR(15), " +
+			"elDescription VARCHAR(15), " +
+			"image VARCHAR(50))";
+	    tx.executeSql(sql);
+	
+	    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('01','Grocery','Super Market','.\Images\Super.jpg')");
+	    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('02','Appearence','Εμφάνιση','.\Images\Clothing.jpg')");
+	    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('03','House','Σπίτι','.\Images\House.jpg')");
+	    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('04','Vehicles','Οχήματα','.\Images\Car.jpg')");
+	    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('05','Family','Οικογένεια','.\Images\Kids.jpg')");
+	    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('06','Personal','Προσωπικά','.\Images\Personal.jpg')");
+	    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('07','Entertainment','Διασκέδαση','.\Images\Entertainment.jpg')");
+	    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('08','Medical','Ιατρικά','.\Images\Entertainment.jpg')");
+//	 	};
+    
+//	tx.executeSql('DROP TABLE IF EXISTS subcategory');
 	var sql = 
 		"CREATE TABLE IF NOT EXISTS subcategory ( "+
 		"code VARCHAR(4) PRIMARY KEY, " +
@@ -162,3 +171,5 @@ function getCategories_success(tx, results) {
  function isNumber(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
+
+ // function checkTableExists_success(tx, results) {lenCategory = results.rows.length; alert(lenCategory);}
