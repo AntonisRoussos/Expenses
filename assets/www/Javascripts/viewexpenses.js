@@ -169,6 +169,7 @@ function getExpenses(tx) {
  }
 
  function getExpensesList_success(tx, results) {
+ 
 	$('#busy').hide();
 //	$('#newExpenseform').hide();
     $('#views').show();
@@ -212,14 +213,15 @@ function getExpenses(tx) {
 	    	var expense = results.rows.item(i);
 	    	if (expense.dateOccured != wdateOccured)
 	    		{
-		    	 if (wdateOccured != '9999/99/99') {$('#expenseList').append('<li>' + subtotal + '€ : Σύνολο Ημέρας</li>')};
+		    	 if (wdateOccured != '9999/99/99') {$('#expenseList').append('<li class="lightblue"> ' + subtotal + '€ : Σύνολο Ημέρας</li>'); $('#expenseList').listview('refresh');};
+//		    	 if (wdateOccured != '9999/99/99') {$('#expenseList').append('<li>' + subtotal + '€ : Σύνολο Ημέρας</li>');};
 		    	 subtotal = 0;
 	    		 wdateOccured = expense.dateOccured;
 	    	     var dateArray = expense.dateOccured.split("/");
 				 var formattedDate = new Date(dateArray[0], dateArray[1]-1, dateArray[2]);
 				 stringformattedDate = formattedDate.format("dddd, d mmmm, yyyy").toString();
 	    		 $('#expenseList').append('<li data-role="list-divider">' + stringformattedDate + '</li>');
-				 $('#expenseList').listview('refresh');
+//				 $('#expenseList').listview('refresh');
 	   			}
 	    	$('#expenseList').append('<li><a href="index.html">' + expense.amount + '€    ' + expense.elDescription + '</a></li>');
     		subtotal = subtotal + expense.amount;
@@ -230,6 +232,8 @@ function getExpenses(tx) {
     			$('#expenseList').append('<li>' + total + '€ : Γενικό Σύνολο</li>');
     			};
  	    	}
+ 	     $('#expenseList').listview('refresh');
+ 	    
  }
  
   function listperCategory(results, len) {

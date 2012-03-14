@@ -33,8 +33,8 @@ function onBodyLoad(){
 //	$('.Selectview').change(function() {viewExpenses()});
 	$('.Selectview').change(function() {$('#information').trigger('pageshow');});
 //	$('.Selectview').change(function() {$('#info').trigger('click');});
-	$('#information').live('pageshow',function(event, ui){viewExpenses();});
-	$('#homepage').live('pageshow',function(event, ui){showForm('expense');});
+	$('#information').on('pageshow',function(event, ui){viewExpenses();});
+	$('#homepage').on('pageshow',function(event, ui){showForm('expense');});
 	$("#toggleView").empty().append('<img src="./Stylesheets/images/analysis.png">');
 	$("#toggleView").val('perDay');
 //	$("#toggleView").empty().append('Click για Έξοδα / Kατηγορία');
@@ -114,7 +114,7 @@ function populateDB(tx) {
 	    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('08','Medical','Ιατρικά','.\Images\Entertainment.jpg')");
 //	 	};
     
-//	tx.executeSql('DROP TABLE IF EXISTS subcategory');
+	tx.executeSql('DROP TABLE IF EXISTS subcategory');
 	var sql = 
 		"CREATE TABLE IF NOT EXISTS subcategory ( "+
 		"code VARCHAR(4) PRIMARY KEY, " +
