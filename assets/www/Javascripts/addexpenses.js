@@ -3,9 +3,11 @@ var dbCreated = false;
 var amount;
 var dateOccured; 
 var category;
+var method;
 var lenCategory;
 var subcategory;
 var readystatus = null;
+var nowtime;
 
 document.addEventListener("deviceready", onDeviceReady, false);
 
@@ -67,7 +69,7 @@ function onBodyLoad(){
 
 function transaction_error(tx, error) {
 	$('#busy').hide();
-    alert("Database Error: " + error);
+    alert("Database Error:" + error);
 }
 
 function populateDB_success() {
@@ -84,9 +86,35 @@ function populateDB(tx) {
 		"amount REAL, " +
 		"dateOccured DATE, " +
 		"category VARCHAR(2), " +
-		"subcategory VARCHAR(2))"; 
+		"subcategory VARCHAR(2)," +
+		"type varchar(1), " +
+		"method varchar(1), " +  
+		"webid INTEGER, " +
+		"commiteDateTime DATETIME)"; 
     tx.executeSql(sql);
-    
+
+	var sql = 
+		"CREATE TABLE IF NOT EXISTS expenseej ( "+
+		"trxtype VARCHAR(1), " +
+		"trxdatetime DATETIME, " +
+		"sn INTEGER, " +
+		"amount REAL, " +
+		"dateOccured DATE, " +
+		"category VARCHAR(2), " +
+		"subcategory VARCHAR(2), " +
+		"type varchar(1), " +
+		"method varchar(1))"; 
+    tx.executeSql(sql);
+// create log record for mobile only additions    
+    tx.executeSql('DROP TRIGGER IF EXISTS insert_expense');
+	var sql = 
+     "CREATE TRIGGER IF NOT EXISTS insert_expense AFTER INSERT ON expense when new.webid = '' " +
+     "BEGIN " +
+		"INSERT INTO expenseej (trxtype, trxdatetime, sn, amount, dateOccured, category, subcategory, type, method) VALUES ('A', DATETIME('NOW'), new.sn, new.amount, new.dateOccured, new.category, new.subcategory, new.type, new.method);" +
+//      UPDATE t1 SET timeEnter = DATETIME('NOW')  WHERE rowid = new.rowid;
+     " END; ";
+    tx.executeSql(sql);
+
     
 //	var sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='category'";
 //    tx.executeSql(sql, [], checkTableExists_success, transaction_error);
@@ -98,29 +126,33 @@ function populateDB(tx) {
 	    tx.executeSql('DROP TABLE IF EXISTS category');
 		var sql = 
 			"CREATE TABLE IF NOT EXISTS category ( "+
-			"code VARCHAR(2) PRIMARY KEY, " +
+			"code VARCHAR(2), " +
+			"type VARCHAR(1), " +
 			"enDescription VARCHAR(15), " +
 			"elDescription VARCHAR(15), " +
-			"image VARCHAR(50))";
+			"image VARCHAR(50), " +
+			"PRIMARY KEY (code, type))";
 	    tx.executeSql(sql);
 	
-	    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('01','Grocery','Super Market','.\Images\Super.jpg')");
-	    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('02','Appearence','Εμφάνιση','.\Images\Clothing.jpg')");
-	    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('03','House','Σπίτι','.\Images\House.jpg')");
-	    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('04','Vehicles','Οχήματα','.\Images\Car.jpg')");
-	    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('05','Family','Οικογένεια','.\Images\Kids.jpg')");
-	    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('06','Personal','Προσωπικά','.\Images\Personal.jpg')");
-	    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('07','Entertainment','Διασκέδαση','.\Images\Entertainment.jpg')");
-	    tx.executeSql("INSERT INTO category (code,enDescription, elDescription, image) VALUES ('08','Medical','Ιατρικά','.\Images\Entertainment.jpg')");
+	    tx.executeSql("INSERT INTO category (code,type,enDescription, elDescription, image) VALUES ('01','E','Grocery','Super Market','.\Images\Super.jpg')");
+	    tx.executeSql("INSERT INTO category (code,type,enDescription, elDescription, image) VALUES ('02','E','Appearence','Εμφάνιση','.\Images\Clothing.jpg')");
+	    tx.executeSql("INSERT INTO category (code,type,enDescription, elDescription, image) VALUES ('03','E','House','Σπίτι','.\Images\House.jpg')");
+	    tx.executeSql("INSERT INTO category (code,type,enDescription, elDescription, image) VALUES ('04','E','Vehicles','Οχήματα','.\Images\Car.jpg')");
+	    tx.executeSql("INSERT INTO category (code,type,enDescription, elDescription, image) VALUES ('05','E','Family','Οικογένεια','.\Images\Kids.jpg')");
+	    tx.executeSql("INSERT INTO category (code,type,enDescription, elDescription, image) VALUES ('06','E','Personal','Προσωπικά','.\Images\Personal.jpg')");
+	    tx.executeSql("INSERT INTO category (code,type,enDescription, elDescription, image) VALUES ('07','E','Entertainment','Διασκέδαση','.\Images\Entertainment.jpg')");
+	    tx.executeSql("INSERT INTO category (code,type,enDescription, elDescription, image) VALUES ('08','E','Medical','Ιατρικά','.\Images\Entertainment.jpg')");
 //	 	};
     
 	tx.executeSql('DROP TABLE IF EXISTS subcategory');
 	var sql = 
 		"CREATE TABLE IF NOT EXISTS subcategory ( "+
-		"code VARCHAR(4) PRIMARY KEY, " +
+		"code VARCHAR(4), " +
+		"type VARCHAR(1), " +
 		"enDescription VARCHAR(15), " +
 		"elDescription VARCHAR(15), " +
-		"picture VARCHAR(50))";
+		"picture VARCHAR(50), " +
+		"PRIMARY KEY (code, type))";
     tx.executeSql(sql);
 }
 
@@ -141,8 +173,9 @@ function populateDB(tx) {
     var originaldate = $('input:[name*="date"]').val();
     date = originaldate.substring(6,10) + "/" + originaldate.substring(3,5) + "/" + originaldate.substring(0,2);
 	category = $("#expense_category").val();
+	method = $("#expense_method").val();
 	$('#busy').show();
-    tx.executeSql("INSERT INTO expense (amount, dateOccured, category, subcategory) VALUES ("+amount+",'"+date+"','"+category+"', '0101')");
+    tx.executeSql("INSERT INTO expense (amount, dateOccured, category, subcategory, type, method, webid, commiteDateTime) VALUES ("+amount+",'"+date+"','"+category+"', '0101', 'E', '"+method+"', '', '')");
  }
  
  function deleteExpensesAll() {

@@ -14,7 +14,8 @@ var WTDstart;
 
 function transaction_error(tx, error) {
 	$('#busy').hide();
-    alert("Database Error: " + error);
+    alert("Database Error:" + error);
+//    console.log("Database Error: " + error.message + "\nCode=" + error.code);
 }
 
 function populateDB_success() {
@@ -100,12 +101,12 @@ function getExpenses(tx) {
  		$('#toggleViewStats').hide();
  		$('#toggleView').show();
  		if (toggleView == "perDay")
- 			{sql = "select x.sn, x.amount, x.dateOccured, y.elDescription, x.category, x.subcategory from expense x, category y where x.category = y.code and " + timeStr + "order by x.dateOccured desc, x.category";
+ 			{sql = "select x.sn, x.amount, x.dateOccured, y.elDescription, x.category, x.subcategory from expense x, category y where x.category = y.code and x.type=y.type and " + timeStr + "order by x.dateOccured desc, x.category";
 			tx.executeSql(sql, [], getExpensesList_success, transaction_error)}
 		else
 			{
  			if (toggleView == "perCategory")
-	 			{sql = "select x.sn, x.amount, x.dateOccured, y.elDescription, x.category, x.subcategory from expense x, category y where x.category = y.code and " + timeStr + "order by x.category, x.dateOccured desc";
+	 			{sql = "select x.sn, x.amount, x.dateOccured, y.elDescription, x.category, x.subcategory from expense x, category y where x.category = y.code and x.type=y.type and " + timeStr + "order by x.category, x.dateOccured desc";
 				tx.executeSql(sql, [], getExpensesList_success, transaction_error)}
 			}
  		};

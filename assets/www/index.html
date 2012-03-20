@@ -8,8 +8,14 @@
 	    <script type="text/javascript" charset="utf-8" src="Javascripts/jquery-1.7.min.js"></script>
     	<!-- script type="text/javascript" charset="utf-8" src="Javascripts/jquery.jqfnumkeypad.js" --><!-- /script -->
 <!-- jquery mobile -->  
+  <script>
+        $(document).bind("mobileinit", function () {
+	    	$.mobile.allowCrossDomainPages = true;
+    		$.support.cors = true;
+        });
+    </script>
     	<script type="text/javascript" charset="utf-8" src="Javascripts/jquery.mobile-1.1.0-rc.1.min.js"></script>
-    	<script type="text/javascript" charset="utf-8" src="Javascripts/jquery.mobile.datebox-1.0.1.min.js"></script>
+       	<script type="text/javascript" charset="utf-8" src="Javascripts/jquery.mobile.datebox-1.0.1.min.js"></script>
     	<script type="text/javascript" charset="utf-8" src="Javascripts/jquery.mobile.datebox.i8n.el.js"></script>
     	<script type="text/javascript" charset="utf-8" src="Javascripts/jqm-docs.js"></script>
 <!-- date format -->
@@ -20,6 +26,7 @@
 <!-- custom -->
     	<script type="text/javascript" charset="utf-8" src="Javascripts/addexpenses.js"></script>
     	<script type="text/javascript" charset="utf-8" src="Javascripts/viewexpenses.js"></script>
+    	<script type="text/javascript" charset="utf-8" src="Javascripts/services.js"></script>
 
 <!-- CSS -->
 
@@ -78,6 +85,13 @@
 						<option value="07">Διασκέδαση</option>
 						<option value="08">Ιατρικά</option>
 					</select>
+
+					<label for="method" class="select">Τρόπος πληρωμής:</label>
+					<select name="method" id="expense_method">
+						<option value="M">Μετρητά</option>
+						<option value="C">Κάρτα</option>
+					</select>
+
 		
 					<div data-role="fieldcontain">
 						<label for="expense_date">Ημερομηνία:</label><input name="date" type="date" id="expense_date" data-role="datebox" data-options='{"mode": "datebox", "disableManualInput": true}' />
@@ -171,6 +185,7 @@
 					<a href="index.html" data-role="button">Εφεδρεία αρχείων</a>
 					<a href="index.html" data-role="button">Ανάκτηση αρχείων</a>
 					<a href="javascript:deleteExpensesAll()" data-role="button">Διαγραφή εξόδων</a>
+					<a href="javascript:synchronizeWithWeb()" data-role="button">Συγχρονισμός με internet</a>
 			</div>
 		<!-- /div -->
 	</div>
