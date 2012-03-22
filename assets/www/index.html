@@ -27,8 +27,7 @@
     	<script type="text/javascript" charset="utf-8" src="Javascripts/addexpenses.js"></script>
     	<script type="text/javascript" charset="utf-8" src="Javascripts/viewexpenses.js"></script>
     	<script type="text/javascript" charset="utf-8" src="Javascripts/services.js"></script>
-    	<script type="text/javascript" charset="utf-8" src="Javascripts/expenseoptions.js"></script>
-
+ 
 <!-- CSS -->
 
         <link rel="stylesheet" href="Stylesheets/jquery.mobile-1.1.0-rc.1.min.css" />
@@ -172,7 +171,6 @@
 	</div><!-- /information -->
 		
 	<div data-role="page" id="settings"> 
-		<!-- div class="ui-body ui-body-b" -->
 			<div data-role="header" data-position="fixed">
 				<h1>Ρυθμίσεις</h1>
 				<a href="#homepage" data-icon="back" class="ui-btn-right" data-rel="back">Πίσω</a>
@@ -188,19 +186,16 @@
 					<a href="javascript:deleteExpensesAll()" data-role="button">Διαγραφή εξόδων</a>
 					<a href="javascript:synchronizeWithWeb()" data-role="button">Συγχρονισμός με internet</a>
 			</div>
-		<!-- /div -->
 	</div>
 
-	<div data-role="page" id="expensedialog"> 
-		<!-- div class="ui-body ui-body-b" -->
+	<div data-role="page" id="deletedialog"> 
 	
-			<div data-role="content">
-					<a href="index.html" data-role="button">Λεπτομέρειες</a>
-					<a href="index.html" data-role="button">Διόρθωση</a>
-					<a href="index.html" data-role="button">Διαγραφή</a>
+			<div data-role="content" id="deldialog">
+					<a href="deleteexpense(' + getUrlVars()["id"] + '" data-role="button">Επιβεβαίωση διαγραφής</a>
+					<a href="#expensedialog" data-role="button" data-rel="back">Επιστροφή</a>
 			</div>
-		<!-- /div -->
 	</div>
+
 
 <!--jqplot -->
         <script class="include" type="text/javascript" src="Javascripts/jquery.jqplot.min.js"></script>
