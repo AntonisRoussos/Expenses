@@ -27,6 +27,7 @@
     	<script type="text/javascript" charset="utf-8" src="Javascripts/addexpenses.js"></script>
     	<script type="text/javascript" charset="utf-8" src="Javascripts/viewexpenses.js"></script>
     	<script type="text/javascript" charset="utf-8" src="Javascripts/services.js"></script>
+	   	<script type="text/javascript" charset="utf-8" src="Javascripts/expensedetails.js"></script>
  
 <!-- CSS -->
 
@@ -110,7 +111,7 @@
 		<!-- /div -->
 
 	</div><!-- /homepage -->
-		
+
 	<div data-role="page" id="information"> 
 
 		<!-- div class="ui-body ui-body-b" -->
@@ -118,11 +119,9 @@
 			<div data-role="header" data-position="fixed" data-id="menu">
 				<h1>Έξοδα</h1>
 				<a href="#settings" data-icon="gear" class="ui-btn-right">Ρυθμίσεις</a>
-				<a href="#" class="ui-btn-left">
-					<div id="toggleView"></div>
+				<a href="#" class="ui-btn-left" id="toggleView">
 				</a>
-				<a href="#" class="ui-btn-left">
-					<div id="toggleViewStats"></div>
+				<a href="#" class="ui-btn-left" id="toggleViewStats">
 				</a>
 				<div data-role="navbar">
 					<ul>
@@ -188,6 +187,17 @@
 			</div>
 	</div>
 
+	<div data-role="page" id="expensedialog"> 
+	
+			<div data-role="content"> 
+				<a href="index.html" data-role="button">Διόρθωση</a>
+				<!-- a href="javascript:showtask" onclick="location.href=this.href+ '(' + getUrlVars()["id"] + ')';return false;" data-role="button" -->
+				<a href="javascript:showexpense()" data-role="button">Λεπτομέρειες</a>
+				<a href="javascript:deleteexpense()" data-role="button">Διαγραφή</a>
+				<a href="#information" data-role="button" data-rel="back">Πίσω</a>
+			</div>
+	</div>
+
 	<div data-role="page" id="deletedialog"> 
 	
 			<div data-role="content" id="deldialog">
@@ -196,6 +206,37 @@
 			</div>
 	</div>
 
+	<div data-role="page" id="showexpense"> 
+		<!-- div class="ui-body ui-body-b" -->
+			<div data-role="header" data-position="fixed" data-id="menu">
+				<h1>Έξοδα</h1>
+				<a href="#settings" data-icon="gear" class="ui-btn-right">Ρυθμίσεις</a>
+				<a href="#information" data-icon="back" class="ui-btn-left" data-rel="back">Πίσω</a>
+					<div data-role="navbar">
+						<ul>
+							<li><a href="#homepage" data-icon="minus" class="ui-btn-active ui-state-persist">Έξοδο</a></li>
+							<li><a href="javascript:showForm('income')" data-icon="plus">Έσοδο</a></li>
+							<li><a href="#information" data-icon="info" id="info">Πληροφορίες</a></li>
+						</ul>
+					</div><!-- /navbar -->
+			</div><!-- /header -->
+	
+			<div data-role="content">
+	
+		    	<div id="showExpenseDetails">
+		
+					<h2>Λεπτομέρειες</h2>
+		
+				       		<p id="showamount"></p>
+				       		<p id="showcategory"></p>
+				       		<p id="showsubcategory"></p>
+				       		<p id="showdate"></p>
+				       		<p id="showmethod"></p>
+				       		<p id="showtype"></p>
+
+			  	</div>
+			</div><!-- /content -->
+	</div><!-- /showexpense -->
 
 <!--jqplot -->
         <script class="include" type="text/javascript" src="Javascripts/jquery.jqplot.min.js"></script>

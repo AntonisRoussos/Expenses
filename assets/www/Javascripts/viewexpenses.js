@@ -51,7 +51,6 @@ function getExpenses(tx) {
   	view = $("#expense_view").val();
  	toggleView = $("#toggleView").val();
   	toggleViewStats = $("#toggleViewStats").val();
-
    	switch (view)
 	{
 	case '01':
@@ -224,8 +223,8 @@ function getExpenses(tx) {
 	    		 $('#expenseList').append('<li data-role="list-divider">' + stringformattedDate + '</li>');
 //				 $('#expenseList').listview('refresh');
 	   			}
-//	    	$('#expenseList').append('<li><a href="javascript:expensedialog(' + expense.sn + ')" data-rel="dialog" data-transition="pop">' + expense.amount + '€    ' + expense.elDescription + '</a></li>');
-	    	$('#expenseList').append('<li><a href="expensedialog.html?id=' + expense.sn + '">' + expense.amount + '€    ' + expense.elDescription + '</a></li>');
+	    	$('#expenseList').append('<li><a href="javascript:expensedialog(' + expense.sn + ')" data-rel="dialog" data-transition="pop">' + expense.amount + '€    ' + expense.elDescription + '</a></li>');
+//	    	$('#expenseList').append('<li><a href="#expensedialog?id=' + expense.sn + '">' + expense.amount + '€    ' + expense.elDescription + '</a></li>');
     		subtotal = subtotal + expense.amount;
     		total = total + expense.amount;
     		if (i == len - 1) 
@@ -240,20 +239,32 @@ function getExpenses(tx) {
  
   function listperCategory(results, len) {
  	     var wcategory = 99;
+ 		 var subtotal = 0;
+ 		 var total = 0;
 	     for (var i=0; i<len; i++)
 	    	{
 	    	var expense = results.rows.item(i);
 	    	if (expense.category != wcategory)
 	    		{
+		    	 if (wcategory != 99) {$('#expenseList').append('<li>' + subtotal + '€ : Σύνολο Κατηγορίας</li>');};
+		    	 subtotal = 0;
 		    	 wcategory = expense.category;
 	    		 $('#expenseList').append('<li data-role="list-divider">' + expense.elDescription + '</li>');
-				 $('#expenseList').listview('refresh');
+//				 $('#expenseList').listview('refresh');
 	   			}
-		     var dateArray = expense.dateOccured.split("/");
-			 var formattedDate = new Date(dateArray[0], dateArray[1]-1, dateArray[2]);
-			 stringformattedDate = formattedDate.format("dddd, d mmmm, yyyy").toString();
-	    	 $('#expenseList').append('<li><a href="#expensedialog?id=' + expense.sn + '" data-rel="dialog" data-transition="pop">' + expense.amount + '€    ' + stringformattedDate + ' </a></li>');
-			}
+		    var dateArray = expense.dateOccured.split("/");
+			var formattedDate = new Date(dateArray[0], dateArray[1]-1, dateArray[2]);
+			stringformattedDate = formattedDate.format("dddd, d mmmm, yyyy").toString();
+	    	$('#expenseList').append('<li><a href="#expensedialog?id=' + expense.sn + '" data-rel="dialog" data-transition="pop">' + expense.amount + '€    ' + stringformattedDate + ' </a></li>');
+    		subtotal = subtotal + expense.amount;
+    		total = total + expense.amount;
+    		if (i == len - 1) 
+    			{
+    			$('#expenseList').append('<li>' + subtotal + '€ : Σύνολο Κατηγορίας</li>');
+    			$('#expenseList').append('<li>' + total + '€ : Γενικό Σύνολο</li>');
+    			};
+ 	    	}
+ 	     $('#expenseList').listview('refresh');
   }
   
   /* Commented out 2-live breakdown 
