@@ -1,4 +1,9 @@
 var expenseid;
+var expenseamount;
+var expensecategory;
+var	expensemethod;
+var	expensedate;
+
  function getUrlVars() {
 	    var vars = [], hash;
 	    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
@@ -34,15 +39,11 @@ function showexpense() {
 
  function showExpense(tx) {
 	var sql;
-//	sql = "select x.amount, x.dateOccured, y.elDescription, x.subcategory, x.method, x.type from expense x, category y where x.sn = " + getUrlVars()["id"] + " and x.category = y.code and x.type=y.type";
 	sql = "select x.amount, x.dateOccured, y.elDescription, x.subcategory, x.method, x.type from expense x, category y where x.sn = " + expenseid + " and x.category = y.code and x.type=y.type";
 	tx.executeSql(sql, [], showExpense_success, transaction_error);
  }
  
  function showExpense_success(tx, results) {
-// 	$('#expensedialog').hide();
-// 	$('#showexpense').show();
-//  	$('#showExpenseDetails').show();
 	var emethod;
 	var etype;
 	$.mobile.changePage( "#showexpense", { transition: "slideup"} );
@@ -80,3 +81,47 @@ function showexpense() {
  function deleteExpense_success(tx, results) {
 	$.mobile.changePage( "#information", {transition: "slideup"} );
  }
+ 
+ function editexpense() {
+    db.transaction(editExpense, transaction_error, populateDB_success);
+}
+
+ function editExpense(tx) {
+	var sql;
+	sql = "select amount, dateOccured, category, subcategory, method, type from expense where sn = " + expenseid + "";
+	tx.executeSql(sql, [], editExpense_success, transaction_error);
+ }
+ 
+ function editExpense_success(tx, results) {
+//	$('#expensedialog').hide();
+//	$('#busy').hide();
+    var len = results.rows.length;
+    for (var i=0; i<len; i++)
+    	{var expense = results.rows.item(i);};
+    expenseamount = expense.amount;
+	expensecategory = expense.category;
+	expensemethod = expense.method;
+    expensedate = expense.dateOccured.substring(8,10) + "/" + expense.dateOccured.substring(5,7) + "/" + expense.dateOccured.substring(0,4);
+	$.mobile.changePage( "#editExpense", { transition: "slideup"} );
+	$('#busy').hide();
+//	$('#editamount').empty().append('<input type="number" id="expense_amount" class="amount" name="amount" value='+expense.amount+'>'); 
+ }
+ 
+  function editExpenseUpdate(tx) {
+    var originaldate = $('input:[name*="date"]').val();
+    date = originaldate.substring(6,10) + "/" + originaldate.substring(3,5) + "/" + originaldate.substring(0,2);
+	category = $("#expense_category").val();
+	method = $("#expense_method").val();
+	$('#busy').show();
+	var sql;
+	sql = "update expense set amount ="+amount+",dateOccured="+date+",category="+category+",method="+method+"where sn="+expenseid+"";
+	alert(sql);
+    tx.executeSql(sql);
+ }
+ 
+ function getFields() {
+ 	var fields = [];
+ 	fields.push(expenseamount, expensecategory, expensemethod, expensedate);
+ 	return fields;
+ }
+ 

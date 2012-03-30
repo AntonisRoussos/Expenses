@@ -37,6 +37,7 @@ function onBodyLoad(){
 //	$('.Selectview').change(function() {$('#info').trigger('click');});
 	$('#information').on('pageshow',function(event, ui){viewExpenses();});
 	$('#homepage').on('pageshow',function(event, ui){showForm('expense');});
+//	$('#editExpense').on('pageshow',function(event, ui){editexpense();});
 	$("#toggleView").empty().append('<img src="./Stylesheets/images/analysis.png">');
 	$("#toggleView").val('perDay');
 //	$("#toggleView").empty().append('Click για Έξοδα / Kατηγορία');
@@ -65,7 +66,26 @@ function onBodyLoad(){
 		  viewExpenses();
 		  $("#toggleViewStats").empty().append('<img src="./Stylesheets/images/chart-pie.png">');
 		});
-	}
+		
+
+// useful to pass data from previous page		
+		$('#editExpense').on('pagebeforeshow',function(e,data){
+			fields = getFields();
+//			var amount = $('#expense_amount',data.prevPage).text();
+			var eamount = fields[0];
+			var ecategory =  fields[1];
+			var emethod =  fields[2];
+			var edate =  fields[3];
+			$('#exp_amount').val(eamount);
+			$('#exp_category').val(ecategory);
+			$('#exp_method').val(emethod);
+			$('#exp_date').val(edate);
+		 });
+ 
+
+}
+
+
 
 function transaction_error(tx, error) {
 	$('#busy').hide();
