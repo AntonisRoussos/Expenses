@@ -37,7 +37,7 @@ function onBodyLoad(){
 //	$('.Selectview').change(function() {$('#info').trigger('click');});
 	$('#information').on('pageshow',function(event, ui){viewExpenses();});
 	$('#homepage').on('pageshow',function(event, ui){showForm('expense');});
-//	$('#editExpense').on('pageshow',function(event, ui){editexpense();});
+	$('#editExpense').on('pageshow',function(event, ui){editexpense();});
 	$("#toggleView").empty().append('<img src="./Stylesheets/images/analysis.png">');
 	$("#toggleView").val('perDay');
 //	$("#toggleView").empty().append('Click για Έξοδα / Kατηγορία');
@@ -66,7 +66,7 @@ function onBodyLoad(){
 		  viewExpenses();
 		  $("#toggleViewStats").empty().append('<img src="./Stylesheets/images/chart-pie.png">');
 		});
-		
+/*		
 
 // useful to pass data from previous page		
 		$('#editExpense').on('pagebeforeshow',function(e,data){
@@ -78,11 +78,13 @@ function onBodyLoad(){
 			var edate =  fields[3];
 			$('#exp_amount').val(eamount);
 			$('#exp_category').val(ecategory);
+//			alert($('#exp_category').val());
+//			$("#exp_category option[value='05']").attr("selected", "selected");
+//			$("#exp_category").prop("selectedIndex", ecategory - 1);
 			$('#exp_method').val(emethod);
 			$('#exp_date').val(edate);
 		 });
- 
-
+*/
 }
 
 
@@ -132,6 +134,22 @@ function populateDB(tx) {
      "BEGIN " +
 		"INSERT INTO expenseej (trxtype, trxdatetime, sn, amount, dateOccured, category, subcategory, type, method) VALUES ('A', DATETIME('NOW'), new.sn, new.amount, new.dateOccured, new.category, new.subcategory, new.type, new.method);" +
 //      UPDATE t1 SET timeEnter = DATETIME('NOW')  WHERE rowid = new.rowid;
+     " END; ";
+    tx.executeSql(sql);
+// create log record for mobile only deletions    
+    tx.executeSql('DROP TRIGGER IF EXISTS delete_expense');
+	var sql = 
+     "CREATE TRIGGER IF NOT EXISTS delete_expense AFTER DELETE ON expense " +
+     "BEGIN " +
+		"INSERT INTO expenseej (trxtype, trxdatetime, sn, amount, dateOccured, category, subcategory, type, method) VALUES ('D', DATETIME('NOW'), old.sn, old.amount, old.dateOccured, old.category, old.subcategory, old.type, old.method);" +
+     " END; ";
+    tx.executeSql(sql);
+// create log record for mobile only updates    
+    tx.executeSql('DROP TRIGGER IF EXISTS update_expense');
+	var sql = 
+     "CREATE TRIGGER IF NOT EXISTS update_expense AFTER UPDATE ON expense " +
+     "BEGIN " +
+		"INSERT INTO expenseej (trxtype, trxdatetime, sn, amount, dateOccured, category, subcategory, type, method) VALUES ('U', DATETIME('NOW'), new.sn, new.amount, new.dateOccured, new.category, new.subcategory, new.type, new.method);" +
      " END; ";
     tx.executeSql(sql);
 
@@ -185,8 +203,8 @@ function populateDB(tx) {
 	  	db.transaction(addExpense, transaction_error, populateDB_success);
   		};
 //  	location.reload();
-		$("#expense_amount").val("");
-		showForm();
+	$("#expense_amount").val("");
+	showForm();
  }
 
  function addExpense(tx) {

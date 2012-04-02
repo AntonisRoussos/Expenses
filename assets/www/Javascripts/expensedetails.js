@@ -83,12 +83,14 @@ function showexpense() {
  }
  
  function editexpense() {
+//    $('#editExpenseform').show();
     db.transaction(editExpense, transaction_error, populateDB_success);
 }
 
  function editExpense(tx) {
 	var sql;
-	sql = "select amount, dateOccured, category, subcategory, method, type from expense where sn = " + expenseid + "";
+//	sql = "select amount, dateOccured, category, subcategory, method, type from expense where sn = " + expenseid + "";
+	sql = "select x.sn, x.amount, x.dateOccured, y.elDescription, x.category, x.subcategory, x.method, x.type from expense x, category y where x.category = y.code and x.type=y.type and sn = " + expenseid + "";
 	tx.executeSql(sql, [], editExpense_success, transaction_error);
  }
  
@@ -100,22 +102,60 @@ function showexpense() {
     	{var expense = results.rows.item(i);};
     expenseamount = expense.amount;
 	expensecategory = expense.category;
+	expenseelDescription = expense.elDescription;
 	expensemethod = expense.method;
     expensedate = expense.dateOccured.substring(8,10) + "/" + expense.dateOccured.substring(5,7) + "/" + expense.dateOccured.substring(0,4);
-	$.mobile.changePage( "#editExpense", { transition: "slideup"} );
-	$('#busy').hide();
+	$('#exp_amount').val(expenseamount);
+//	$('#exp_category').remove();
+//	a= "<option value='"+expensecategory+"'>"+expenseelDescription+"</option>";
+//	$('#exp_category').children().remove();
+//	$('#exp_category').empty();
+//	$('#exp_category').append(a);
+	$('#exp_category').prop("selectedIndex", expensecategory - 1);
+	$('#exp_category').append('<option value="01">Super Market</option>');
+	$('#exp_category').append('<option value="02">Εμφάνιση</option>');
+	$('#exp_category').append('<option value="03">Σπίτι</option>');
+	$('#exp_category').append('<option value="04">Οχήματα</option>');
+	$('#exp_category').append('<option value="05">Οικογένεια</option>');
+	$('#exp_category').append('<option value="06">Προσωπικά</option>');
+	$('#exp_category').append('<option value="07">Διασκέδαση</option>');
+	$('#exp_category').append('<option value="08">Ιατρικά</option>');
+//	$("#exp_category option[value='05']").attr("selected", "selected");
+//	$('#exp_category').val(expensecategory);
+	$('#exp_category').val(expensecategory).attr('selected', true).siblings('option').removeAttr('selected');
+	$('#exp_category').selectmenu("refresh", true);
+	$('#exp_method').prop("selectedIndex", expensemethod - 1);
+	$('#exp_method').append('<option value="M">Μετρητά</option>');
+	$('#exp_method').append('<option value="C">Κάρτα</option>');
+	$('#exp_method').val(expensemethod).attr('selected', true).siblings('option').removeAttr('selected');
+	$('#exp_method').selectmenu("refresh", true);
+	$('#exp_date').val(expensedate);
+	
+    
+    $('#editExpenseform').show();
+//	$.mobile.changePage( "#editExpense", { transition: "slideup"} );
 //	$('#editamount').empty().append('<input type="number" id="expense_amount" class="amount" name="amount" value='+expense.amount+'>'); 
  }
  
   function editExpenseUpdate(tx) {
-    var originaldate = $('input:[name*="date"]').val();
-    date = originaldate.substring(6,10) + "/" + originaldate.substring(3,5) + "/" + originaldate.substring(0,2);
-	category = $("#expense_category").val();
-	method = $("#expense_method").val();
+	expenseamount = $('#exp_amount').val();
+ 	if (expenseamount<1 || expenseamount>100000 || !(isNumber(expenseamount))) 
+		{alert('Μη επιτρεπτό ποσό');}
+	else
+		{	
+  	  	db.transaction(editExpenseUpdateFields, transaction_error, populateDB_success);
+  		};
+	$.mobile.changePage( "#information", {transition: "slideup"} );
+  }
+  
+  function editExpenseUpdateFields(tx) {
+    var originaldate = $('#exp_date').val();
+    var date = originaldate.substring(6,10) + "/" + originaldate.substring(3,5) + "/" + originaldate.substring(0,2);
+	var category = $('#exp_category').val();
+	var method = $('#exp_method').val();
 	$('#busy').show();
 	var sql;
-	sql = "update expense set amount ="+amount+",dateOccured="+date+",category="+category+",method="+method+"where sn="+expenseid+"";
-	alert(sql);
+	sql = "update expense set amount ="+expenseamount+",dateOccured='"+date+"',category='"+category+"',method='"+method+"' where sn="+expenseid+"";
     tx.executeSql(sql);
  }
  

@@ -255,7 +255,8 @@ function getExpenses(tx) {
 		    var dateArray = expense.dateOccured.split("/");
 			var formattedDate = new Date(dateArray[0], dateArray[1]-1, dateArray[2]);
 			stringformattedDate = formattedDate.format("dddd, d mmmm, yyyy").toString();
-	    	$('#expenseList').append('<li><a href="#expensedialog?id=' + expense.sn + '" data-rel="dialog" data-transition="pop">' + expense.amount + '€    ' + stringformattedDate + ' </a></li>');
+	    	$('#expenseList').append('<li><a href="javascript:expensedialog(' + expense.sn + ')" data-rel="dialog" data-transition="pop">' + expense.amount + '€    ' + stringformattedDate + '</a></li>');
+//	    	$('#expenseList').append('<li><a href="#expensedialog?id=' + expense.sn + '" data-rel="dialog" data-transition="pop">' + expense.amount + '€    ' + stringformattedDate + ' </a></li>');
     		subtotal = subtotal + expense.amount;
     		total = total + expense.amount;
     		if (i == len - 1) 
