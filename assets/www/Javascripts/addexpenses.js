@@ -213,7 +213,7 @@ function populateDB(tx) {
 	category = $("#expense_category").val();
 	method = $("#expense_method").val();
 	$('#busy').show();
-    tx.executeSql("INSERT INTO expense (amount, dateOccured, category, subcategory, type, method, webid, commiteDateTime) VALUES ("+amount+",'"+date+"','"+category+"', '0101', 'E', '"+method+"', '', '')");
+    tx.executeSql("INSERT INTO expense (amount, dateOccured, category, subcategory, type, method, webid, commiteDateTime) VALUES ("+amount+",'"+date+"','"+category+"', '0101', 'E', '"+method+"', '', DATETIME('NOW'))");
  }
  
  function deleteExpensesAll() {
