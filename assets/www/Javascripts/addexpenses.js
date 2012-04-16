@@ -111,8 +111,9 @@ function populateDB(tx) {
 		"subcategory VARCHAR(2)," +
 		"type varchar(1), " +
 		"method varchar(1), " +  
-		"webid INTEGER, " +
-		"commiteDateTime DATETIME)"; 
+		"webid INTEGER DEFAULT NULL, " +
+		"commiteDateTime DATETIME, " + 
+		"sync varchar(1))"; 
     tx.executeSql(sql);
 
 	var sql = 
@@ -127,10 +128,16 @@ function populateDB(tx) {
 		"type varchar(1), " +
 		"method varchar(1))"; 
     tx.executeSql(sql);
+
+	var sql = 
+		"CREATE UNIQUE INDEX IF NOT EXISTS uniqueqwebid on expense (webid)";
+    tx.executeSql(sql);
+
 // create log record for mobile only additions    
+
     tx.executeSql('DROP TRIGGER IF EXISTS insert_expense');
 	var sql = 
-     "CREATE TRIGGER IF NOT EXISTS insert_expense AFTER INSERT ON expense when new.webid = '' " +
+     "CREATE TRIGGER IF NOT EXISTS insert_expense AFTER INSERT ON expense when new.webid is NULL " +
      "BEGIN " +
 		"INSERT INTO expenseej (trxtype, trxdatetime, sn, amount, dateOccured, category, subcategory, type, method) VALUES ('A', DATETIME('NOW'), new.sn, new.amount, new.dateOccured, new.category, new.subcategory, new.type, new.method);" +
 //      UPDATE t1 SET timeEnter = DATETIME('NOW')  WHERE rowid = new.rowid;
@@ -147,7 +154,7 @@ function populateDB(tx) {
 // create log record for mobile only updates    
     tx.executeSql('DROP TRIGGER IF EXISTS update_expense');
 	var sql = 
-     "CREATE TRIGGER IF NOT EXISTS update_expense AFTER UPDATE ON expense " +
+     "CREATE TRIGGER IF NOT EXISTS update_expense AFTER UPDATE ON expense when new.sync = '' " +
      "BEGIN " +
 		"INSERT INTO expenseej (trxtype, trxdatetime, sn, amount, dateOccured, category, subcategory, type, method) VALUES ('U', DATETIME('NOW'), new.sn, new.amount, new.dateOccured, new.category, new.subcategory, new.type, new.method);" +
      " END; ";
@@ -213,7 +220,8 @@ function populateDB(tx) {
 	category = $("#expense_category").val();
 	method = $("#expense_method").val();
 	$('#busy').show();
-    tx.executeSql("INSERT INTO expense (amount, dateOccured, category, subcategory, type, method, webid, commiteDateTime) VALUES ("+amount+",'"+date+"','"+category+"', '0101', 'E', '"+method+"', '', DATETIME('NOW'))");
+//    tx.executeSql("INSERT INTO expense (amount, dateOccured, category, subcategory, type, method, webid, commiteDateTime, sync) VALUES ("+amount+",'"+date+"','"+category+"', '0101', 'E', '"+method+"', '', DATETIME('NOW'),'')");
+    tx.executeSql("INSERT INTO expense (amount, dateOccured, category, subcategory, type, method, commiteDateTime, sync) VALUES ("+amount+",'"+date+"','"+category+"', '0101', 'E', '"+method+"', DATETIME('NOW'),'')");
  }
  
  function deleteExpensesAll() {

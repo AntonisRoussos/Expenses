@@ -155,7 +155,7 @@ function showexpense() {
 	var method = $('#exp_method').val();
 	$('#busy').show();
 	var sql;
-	sql = "update expense set amount ="+expenseamount+",dateOccured='"+date+"',category='"+category+"',method='"+method+"',commiteDateTime=DATETIME('NOW') where sn="+expenseid+"";
+	sql = "update expense set amount ="+expenseamount+",dateOccured='"+date+"',category='"+category+"',method='"+method+"',commiteDateTime=DATETIME('NOW'),sync='' where sn="+expenseid+"";
     tx.executeSql(sql);
  }
  
