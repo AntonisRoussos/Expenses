@@ -1,9 +1,10 @@
 var db;
-var serviceURL = "http://rememberlist.heroku.com/expenses/";
+//var serviceURL = "http://rememberlist.heroku.com/expenses/";
 //var serviceURL = "http://localhost:3000/expenses/";
-//var serviceURL = "http://10.0.2.2:3000/expenses/";
+var serviceURL = "http://10.0.2.2:3000/expenses/";
 var mobiledata = [];
 var webdata = [];
+var webreply = [];
 var webdataFormatted = [];
 
   var trxtype;
@@ -15,7 +16,9 @@ var webdataFormatted = [];
   var subcategory;
   var ttype;
   var trxmethod;
-
+var webindex;
+var mobid;
+var webid;
 
 
 function transaction_error(tx, error) {
@@ -67,13 +70,16 @@ function getExpensesEJ(tx) {
 //					$(webdata).each(function(i,web){
 //					    webdata.push([web.expense.trxtype, web.expense.trxdatetime, web.expense.sn, web.expense.amount, web.expense.dateOccured, web.expense.category, web.expense.subcategory, web.expense.type, web.expense.method]);
 //						webdata.push(web);
-  //					});
-//	console.log("web");
-//	console.log(webdata);
-	update_from_web(webdata);
-	clear_journal();
+//					});
+//					console.log("web");
+//					console.log(webdata);
+				 	webindex = jQuery.inArray("web", webdata);
+				 	if (webindex !== -1)
+					 	{webreply = webdata.splice(0,webindex);
+						update_from_web(webdata);};
+					clear_journal();
 				}
-	 });
+	 	});
  	request.fail(function(jqXHR, textStatus) {
 	  alert( "Request failed: " + textStatus );
 	});
@@ -81,6 +87,16 @@ function getExpensesEJ(tx) {
  }
   
  function update_from_web(webdata){
+// alert(webreply);
+	$.each(webreply, function(index, value) { 
+	  var remainder = index % 2;
+	  if (remainder == 0) {mobid = value};
+	  if (remainder == 1) 
+	  	{webid = value;
+	  	db.transaction(updateExpenseFromMobile, transaction_error, populateDB_success);};
+	});
+	webdata.shift();
+//	alert(webdata); 
 	webdataFormatted=[];
 	$.each(webdata, function(index, value) { 
 	  var remainder = index % 9;
@@ -134,6 +150,12 @@ function getExpensesEJ(tx) {
   	db.transaction(putExpensesEJ, transaction_error, populateDB_success);
  } 
  
+ function updateExpenseFromMobile(tx) {
+		var sql = "UPDATE expense SET webid ="+webid+",sync='S' WHERE sn = " + mobid + "";
+//		alert(sql);
+		tx.executeSql(sql);	
+ }
+
  function putExpensesEJ(tx) {
 //  	$('#busy').show();
 // select uncommited changes
@@ -147,7 +169,8 @@ function getExpensesEJ(tx) {
 	if (webdataFormatted[index][0] == 'U')
 		{var sql = "UPDATE expense SET amount ="+webdataFormatted[index][3]+",dateOccured='"+webdataFormatted[index][4]+"',category='"+webdataFormatted[index][5]+"', " +
 		" subcategory='"+webdataFormatted[index][6]+"',method='"+webdataFormatted[index][8]+"',commiteDateTime='"+webdataFormatted[index][1]+"',sync='S' " +
-		" WHERE webid = " + webdataFormatted[index][2] + " AND commiteDateTime < '"+webdataFormatted[index][1]+"'";};
+		" WHERE webid = " + webdataFormatted[index][2] + " AND commiteDateTime < '"+webdataFormatted[index][1]+"'";
+		alert(sql);};
 	tx.executeSql(sql);	
 	});
  }
