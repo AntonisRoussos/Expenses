@@ -6,7 +6,10 @@ var mobiledata = [];
 var webdata = [];
 var webreply = [];
 var webdataFormatted = [];
-
+var mobileinserteddata = [];
+var mobIds = [];
+var wcounter;
+var counterOfDataAddedtoWeb;
   var trxtype;
   var trxdatetime;
   var sn;
@@ -19,6 +22,7 @@ var webdataFormatted = [];
 var webindex;
 var mobid;
 var webid;
+// var currentwebid;
 
 
 function transaction_error(tx, error) {
@@ -31,11 +35,13 @@ function populateDB_success() {
 }
 
 function synchronizeWithWeb() {
-	$('#busy').show();
+//	$('#busy').show();
 //  Get EJ (logs) from file to update the web server 
     db.transaction(getExpensesEJ, transaction_error, populateDB_success);
 //	synchronizeFromWeb();
+//    if (mobileinserteddata !== []) {send_inserted_data_to_web();};
 }
+
 
 function getExpensesEJ(tx) {
 //  	$('#busy').show();
@@ -81,25 +87,21 @@ function getExpensesEJ(tx) {
 				}
 	 	});
  	request.fail(function(jqXHR, textStatus) {
-	  alert( "Request failed: " + textStatus );
+	  alert( "Ο συγχρονισμός απέτυχε. Ελέγξτε την σύνδεση σας στο Internet: " + textStatus );
 	});
 //	console.log(mobiledata);
  }
   
  function update_from_web(webdata){
-// alert(webreply);
-	$.each(webreply, function(index, value) { 
-	  var remainder = index % 2;
-	  if (remainder == 0) {mobid = value};
-	  if (remainder == 1) 
-	  	{webid = value;
-	  	db.transaction(updateExpenseFromMobile, transaction_error, populateDB_success);};
-	});
+//	console.log(webreply);
+	db.transaction(updateExpenseFromMobile, transaction_error, populateDB_success);
 	webdata.shift();
-//	alert(webdata); 
 	webdataFormatted=[];
+	counterOfDataAddedtoWeb = 0;
+//   	console.log(webdata);
 	$.each(webdata, function(index, value) { 
 	  var remainder = index % 9;
+	  
 	  if (remainder == 0) {trxtype = value};
 	  if (remainder == 1) {trxdatetime = value};
 	  if (remainder == 2) {sn = value};
@@ -109,8 +111,12 @@ function getExpensesEJ(tx) {
 	  if (remainder == 6) {subcategory = value};
 	  if (remainder == 7) {ttype = value};
 	  if (remainder == 8) {trxmethod = value};
+//    	console.log(remainder);
+//    	console.log(trxtype);
 	  if (remainder == 8 && trxtype == 'A')
-	        {webdataFormatted.push([trxtype, trxdatetime, sn, amount, dateoccured, category, subcategory, ttype, trxmethod])
+	        {webdataFormatted.push([trxtype, trxdatetime, sn, amount, dateoccured, category, subcategory, ttype, trxmethod]);
+			counterOfDataAddedtoWeb++;
+//			alert(counterOfDataAddedtoWeb);
 //	        	console.log(webdataFormatted);
 //	        	console.log(webdataFormatted[windex][2]);
 	        };
@@ -151,18 +157,28 @@ function getExpensesEJ(tx) {
  } 
  
  function updateExpenseFromMobile(tx) {
+	$.each(webreply, function(index, value) { 
+	  var remainder = index % 2;
+	  if (remainder == 0) {mobid = value};
+	  if (remainder == 1) 
+	  	{webid = value;
 		var sql = "UPDATE expense SET webid ="+webid+",sync='S' WHERE sn = " + mobid + "";
 //		alert(sql);
-		tx.executeSql(sql);	
+		tx.executeSql(sql);};
+	});
  }
 
  function putExpensesEJ(tx) {
 //  	$('#busy').show();
 // select uncommited changes
 //	console.log(tx);
+	mobileinserteddata.length = 0;
+	mobIds.length = 0;
 	$.each(webdataFormatted, function(index, value) { 
 	if (webdataFormatted[index][0] == 'A')
-		{var sql = "INSERT INTO expense (amount, dateOccured, category, subcategory, type, method, webid, commiteDateTime, sync) " + 
+		{
+//		currentwebid = webdataFormatted[index][2];
+		var sql = "INSERT INTO expense (amount, dateOccured, category, subcategory, type, method, webid, commiteDateTime, sync) " + 
 		"VALUES ("+webdataFormatted[index][3]+",'"+webdataFormatted[index][4]+"','"+webdataFormatted[index][5]+"', '"+webdataFormatted[index][6]+"', '"+webdataFormatted[index][7]+"', '"+webdataFormatted[index][8]+"', "+webdataFormatted[index][2]+", '"+webdataFormatted[index][1]+"','S')";};
 	if (webdataFormatted[index][0] == 'D')
 		{var sql = "DELETE FROM expense WHERE webid = " + webdataFormatted[index][2] + "";};
@@ -170,10 +186,31 @@ function getExpensesEJ(tx) {
 		{var sql = "UPDATE expense SET amount ="+webdataFormatted[index][3]+",dateOccured='"+webdataFormatted[index][4]+"',category='"+webdataFormatted[index][5]+"', " +
 		" subcategory='"+webdataFormatted[index][6]+"',method='"+webdataFormatted[index][8]+"',commiteDateTime='"+webdataFormatted[index][1]+"',sync='S' " +
 		" WHERE webid = " + webdataFormatted[index][2] + " AND commiteDateTime < '"+webdataFormatted[index][1]+"'";
-		alert(sql);};
-	tx.executeSql(sql);	
+//		alert(sql);
+		};
+//	tx.executeSql(sql);
+	wcounter = 0;
+	tx.executeSql(sql, [], querySuccess, transaction_error);	
 	});
  }
+ 
+ function querySuccess(tx, results) {
+ // check push only on additions and only one final call send_inserted ......
+// 	alert(results.insertId);
+    mobIds.push(results.insertId);
+// 	mobileinserteddata.push(expense.webid, results.insertId );
+    wcounter++;
+    console.log(wcounter);
+    console.log(mobIds);
+ 	if (wcounter == counterOfDataAddedtoWeb) 
+ 		{
+		$.each(mobIds, function(index, value) { 
+				mobileinserteddata.push(webdataFormatted[index][2], mobIds [index]);
+		});
+	    console.log(mobileinserteddata);
+		send_inserted_data_to_web();
+	};
+}
  
  function clear_journal() {
    	db.transaction(clearExpensesEJ, transaction_error, populateDB_success);
@@ -183,3 +220,20 @@ function getExpensesEJ(tx) {
 	var sql = "DELETE FROM expenseej";
 	tx.executeSql(sql);	
  } 
+ 
+ function send_inserted_data_to_web() {
+// alert(mobileinserteddata);
+	 var request = $.ajax({
+	  	url: serviceURL + "synchronize_with_mobile_second_step",
+	  	type: 'POST',
+	  	dataType: 'json',
+	  	data: {user: 'grtramp@yahoo.gr', mobileinserteddata: mobileinserteddata},
+	beforeSend : function(xhr){
+       xhr.setRequestHeader("Accept", "application/json")
+     },
+		success:function(webdata) {alert( "Ο συγχρονισμός τελείωσε με επιτυχία.");}
+	 	});
+ 	request.fail(function(jqXHR, textStatus) {alert( "Ο συγχρονισμός απέτυχε. Ελέγξτε την σύνδεση σας στο Internet: " + textStatus );});
+//	console.log(mobiledata);
+ 
+ };
