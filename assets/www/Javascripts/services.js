@@ -22,6 +22,7 @@ var counterOfDataAddedtoWeb;
 var webindex;
 var mobid;
 var webid;
+var userEmailFound = false; 
 // var currentwebid;
 
 
@@ -41,7 +42,6 @@ function synchronizeWithWeb() {
 //	synchronizeFromWeb();
 //    if (mobileinserteddata !== []) {send_inserted_data_to_web();};
 }
-
 
 function getExpensesEJ(tx) {
 //  	$('#busy').show();
@@ -82,7 +82,9 @@ function getExpensesEJ(tx) {
 				 	webindex = jQuery.inArray("web", webdata);
 				 	if (webindex !== -1)
 					 	{webreply = webdata.splice(0,webindex);
-						update_from_web(webdata);};
+						update_from_web(webdata);}
+					else
+						{alert( "Ο συγχρονισμός τελείωσε με επιτυχία.")};
 					clear_journal();
 				}
 	 	});
@@ -237,3 +239,60 @@ function getExpensesEJ(tx) {
 //	console.log(mobiledata);
  
  };
+ 
+ function user_not_found(tx, error) {
+	$('#busy').hide();
+	var useremail = ''
+	$('#user_id').val(useremail);
+	alert(useremail);
+	$('#editUserProfile').show();
+	
+ }
+
+ function registerUser() {
+    db.transaction(getUser, transaction_error, populateDB_success);
+ }
+
+ function getUser(tx) {
+	var sql = "select * from user";
+	tx.executeSql(sql, [], getUser_success, transaction_error);
+ }
+ 
+  function getUser_success(tx, results) {
+    var len = results.rows.length;
+    $('#user_id').val('');
+    userEmailFound = false;
+    if (len > 0)
+      {
+      userEmailFound = true;
+      for (var i=0; i<len; i++) {
+    	 var user = results.rows.item(i);
+		 $('#user_id').val(user.email);
+	     }
+	  };
+	$('#editUserProfile').show();
+ }
+
+ function updateWebUser() {
+  	var useremail = $('#user_id').val();
+  	var userpassword = $('#user_password').val();
+ 	if (useremail == '' || userpassword == '') 
+		{alert('Κενό email ή password');}
+	else
+		{	
+  	  	db.transaction(editUserUpdateFields, transaction_error, populateDB_success);
+  		};
+	$.mobile.changePage( "#settings", {transition: "slideup"} );
+  }
+ 
+   function editUserUpdateFields(tx) {
+  	var useremail = $('#user_id').val();
+  	var userpassword = $('#user_password').val();
+	$('#busy').show();
+	var sql;
+	if (userEmailFound == true)
+		{sql = "update user set email ='"+useremail+"',password='"+userpassword+"'"}
+	else
+		{sql = "insert into user (email, password) values ('"+useremail+"','"+userpassword+"')"};
+    tx.executeSql(sql);
+ }

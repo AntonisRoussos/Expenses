@@ -182,8 +182,10 @@
 					<a href="index.html" data-role="button">Κατηγορίες εσόδων</a>
 					<a href="index.html" data-role="button">Εφεδρεία αρχείων</a>
 					<a href="index.html" data-role="button">Ανάκτηση αρχείων</a>
-					<a href="javascript:deleteExpensesAll()" data-role="button">Διαγραφή εξόδων</a>
-					<a href="javascript:synchronizeWithWeb()" data-role="button">Συγχρονισμός με internet</a>
+					<a href="#userProfile" data-role="button">Καταχώρηση χρήστη στο web</a>
+					<a href="javascript:synchronizeWithWeb()" data-role="button">Συγχρονισμός με web</a>
+					<a href="index.html" data-role="button">Αντιγραφή δεδομένων από web</a>
+					<!-- a href="javascript:deleteExpensesAll()" data-role="button" --><!-- /a -->
 			</div>
 	</div>
 
@@ -289,7 +291,50 @@
 
 		<!-- /div -->
 
-	</div><!-- /homepage -->
+	</div><!-- /editExpense -->
+
+	<div data-role="page" id="userProfile"> 
+		<!-- div class="ui-body ui-body-b" -->
+			<div data-role="header" data-position="fixed" data-id="menu">
+				<h1>Έξοδα</h1>
+				<a href="#settings" data-icon="gear" class="ui-btn-right">Ρυθμίσεις</a>
+				<a href="#information" data-icon="back" class="ui-btn-left" data-rel="back">Πίσω</a>
+					<div data-role="navbar">
+						<ul>
+							<li><a href="#homepage" data-icon="minus" class="ui-btn-active ui-state-persist">Έξοδο</a></li>
+							<li><a href="javascript:showForm('income')" data-icon="plus">Έσοδο</a></li>
+							<li><a href="#information" data-icon="info" id="info">Πληροφορίες</a></li>
+						</ul>
+					</div><!-- /navbar -->
+			</div><!-- /header -->
+	
+			<div data-role="content">
+	
+		    	<div id="editUserProfile">
+		
+					<h2>Στοιχεία χρήστη στο web</h2>
+	
+  				    <div data-role="fieldcontain" class="ui-hide-label">
+						<label for="user_id">email χρήστη:</label>
+						<input type="email" id="user_id" name="userid" value="" placeholder="Δώστε email web ..."><br>
+					</div>
+				    <div data-role="fieldcontain" class="ui-hide-label">
+			            <label for="user_password">Password:</label>
+			            <input type="password" name="password" id="user_password" value="" placeholder="Password" />
+			        </div>		
+			        <fieldset class="ui-grid-a">
+				  		<div class="ui-block-f"><input id="userProfile_submit" type="submit" value="Καταχώρηση" onClick="updateWebUser()" data-theme ="f"/></div>
+			    	</fieldset>
+			        
+					
+				</div><!-- /editUserProfile -->
+
+			</div><!-- /content -->
+
+		<!-- /div -->
+
+	</div><!-- /userProfile -->
+
 
 
 <!--jqplot -->

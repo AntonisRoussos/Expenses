@@ -8,7 +8,7 @@ var lenCategory;
 var subcategory;
 var readystatus = null;
 var nowtime;
-
+ 
 document.addEventListener("deviceready", onDeviceReady, false);
 
 
@@ -38,6 +38,7 @@ function onBodyLoad(){
 	$('#information').on('pageshow',function(event, ui){viewExpenses();});
 	$('#homepage').on('pageshow',function(event, ui){showForm('expense');});
 	$('#editExpense').on('pageshow',function(event, ui){editexpense();});
+	$('#userProfile').on('pageshow',function(event, ui){registerUser();});
 	$("#toggleView").empty().append('<img src="./Stylesheets/images/analysis.png">');
 	$("#toggleView").val('perDay');
 //	$("#toggleView").empty().append('Click για Έξοδα / Kατηγορία');
@@ -100,8 +101,14 @@ function populateDB_success() {
 }
 
 function populateDB(tx) {
-//	tx.executeSql('DROP TABLE IF EXISTS expense');
+//	tx.executeSql('DROP TABLE IF EXISTS user');
 //	$('#busy').show();
+	var sql = 
+		"CREATE TABLE IF NOT EXISTS user ( "+
+		"email VARCHAR(40)," +
+		"password varchar(40))"; 
+    tx.executeSql(sql);
+
 	var sql = 
 		"CREATE TABLE IF NOT EXISTS expense ( "+
 		"sn INTEGER PRIMARY KEY AUTOINCREMENT, " +
