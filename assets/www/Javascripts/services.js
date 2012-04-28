@@ -22,7 +22,10 @@ var counterOfDataAddedtoWeb;
 var webindex;
 var mobid;
 var webid;
+var parm;
 var userEmailFound = false; 
+var usremail;
+var usrpasswordemail;
 // var currentwebid;
 
 
@@ -38,7 +41,8 @@ function populateDB_success() {
 function synchronizeWithWeb() {
 //	$('#busy').show();
 //  Get EJ (logs) from file to update the web server 
-    db.transaction(getExpensesEJ, transaction_error, populateDB_success);
+	parm = 0;
+    db.transaction(getUser, transaction_error, populateDB_success);
 //	synchronizeFromWeb();
 //    if (mobileinserteddata !== []) {send_inserted_data_to_web();};
 }
@@ -64,7 +68,7 @@ function getExpensesEJ(tx) {
 	  	url: serviceURL + "synchronize_with_mobile",
 	  	type: 'POST',
 	  	dataType: 'json',
-	  	data: {user: 'grtramp@yahoo.gr', mobiledata: mobiledata},
+	  	data: {user: usremail, password: usrpassword, mobiledata: mobiledata},
 //	    async: true,
 //	  	headers: {'Content-Type': 'application/json'},
 	beforeSend : function(xhr){
@@ -77,15 +81,21 @@ function getExpensesEJ(tx) {
 //					    webdata.push([web.expense.trxtype, web.expense.trxdatetime, web.expense.sn, web.expense.amount, web.expense.dateOccured, web.expense.category, web.expense.subcategory, web.expense.type, web.expense.method]);
 //						webdata.push(web);
 //					});
-//					console.log("web");
-//					console.log(webdata);
-				 	webindex = jQuery.inArray("web", webdata);
-				 	if (webindex !== -1)
-					 	{webreply = webdata.splice(0,webindex);
-						update_from_web(webdata);}
+					console.log("web");
+					console.log(webdata);
+					var responsecode = webdata.shift();
+				 	if (responsecode == 0)
+					 	{
+					 	webindex = jQuery.inArray("web", webdata);
+					 	if (webindex != -1)
+						 	{webreply = webdata.splice(0,webindex);
+							update_from_web(webdata);}
+						else
+							{alert( "Ο συγχρονισμός τελείωσε με επιτυχία.")};
+						clear_journal();
+						}
 					else
-						{alert( "Ο συγχρονισμός τελείωσε με επιτυχία.")};
-					clear_journal();
+						{alert( "Ο χρήστης δεν πιστοποιήθηκε. Διορθώστε το email ή/και το password και ξαναπροσπαθήστε.")}
 				}
 	 	});
  	request.fail(function(jqXHR, textStatus) {
@@ -240,16 +250,8 @@ function getExpensesEJ(tx) {
  
  };
  
- function user_not_found(tx, error) {
-	$('#busy').hide();
-	var useremail = ''
-	$('#user_id').val(useremail);
-	alert(useremail);
-	$('#editUserProfile').show();
-	
- }
-
  function registerUser() {
+	parm = 1;
     db.transaction(getUser, transaction_error, populateDB_success);
  }
 
@@ -268,9 +270,17 @@ function getExpensesEJ(tx) {
       for (var i=0; i<len; i++) {
     	 var user = results.rows.item(i);
 		 $('#user_id').val(user.email);
+		 usremail=user.email;
+		 usrpassword=user.password;
 	     }
 	  };
-	$('#editUserProfile').show();
+	if (parm == 1)
+		{$('#editUserProfile').show()}
+	else
+		if (userEmailFound)
+			{db.transaction(getExpensesEJ, transaction_error, populateDB_success);}
+		else
+			{alert( "Παρακαλώ κάντε καταχώρηση χρήστη στο web.")}
  }
 
  function updateWebUser() {
@@ -282,6 +292,10 @@ function getExpensesEJ(tx) {
 		{	
   	  	db.transaction(editUserUpdateFields, transaction_error, populateDB_success);
   		};
+  		
+  		//  Post results to web server
+	
+  		
 	$.mobile.changePage( "#settings", {transition: "slideup"} );
   }
  
@@ -295,4 +309,31 @@ function getExpensesEJ(tx) {
 	else
 		{sql = "insert into user (email, password) values ('"+useremail+"','"+userpassword+"')"};
     tx.executeSql(sql);
+    AuthenticateUserOnWeb(useremail, userpassword);
  }
+ 
+   function AuthenticateUserOnWeb(usermail, userpassword) {
+ 	var request = $.ajax({
+	  	url: serviceURL + "authenticate_mobile_user",
+	  	type: 'POST',
+	  	dataType: 'json',
+	  	data: {user: usermail, password: userpassword},
+	beforeSend : function(xhr){
+       xhr.setRequestHeader("Accept", "application/json")
+     },
+	success:function(webdata) {
+					console.log(webdata);
+				 	if (webdata == 1)
+						{alert( "Ο χρήστης δεν πιστοποιήθηκε. Διορθώστε το email ή/και το password και ξαναπροσπαθήστε.")}
+					else
+					 	if (webdata == 2)
+							{alert( "Ο χρήστης δεν είναι ενεργός. Ενεργοποιήστε τον από το email σας.")}
+						else
+							{alert( "Ο χρήστης πιστοποιήθηκε με επιτυχία.")};
+	}
+	});
+ 	request.fail(function(jqXHR, textStatus) {
+	  alert( "Η πιστοποίηση χρήστη απέτυχε. Ελέγξτε την σύνδεση σας στο Internet: " + textStatus );
+	});
+ }  		
+ 
