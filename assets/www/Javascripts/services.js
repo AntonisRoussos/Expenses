@@ -83,7 +83,10 @@ function getExpensesEJ(tx) {
 //					});
 					console.log("web");
 					console.log(webdata);
-					var responsecode = webdata.shift();
+					if (webdata.length > 1)
+						{var responsecode = webdata.shift();}
+					else
+						{var responsecode = webdata};
 				 	if (responsecode == 0)
 					 	{
 					 	webindex = jQuery.inArray("web", webdata);
@@ -221,6 +224,7 @@ function getExpensesEJ(tx) {
 		});
 	    console.log(mobileinserteddata);
 		send_inserted_data_to_web();
+//		alert( "Ο συγχρονισμός τελείωσε με επιτυχία.");
 	};
 }
  

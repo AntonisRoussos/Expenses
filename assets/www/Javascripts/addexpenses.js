@@ -11,6 +11,18 @@ var nowtime;
  
 document.addEventListener("deviceready", onDeviceReady, false);
 
+/*
+document.addEventListener("backbutton", function(e){
+    if($.mobile.activePage.is('#homepage')){
+        e.preventDefault();
+        navigator.app.exitApp();
+    }
+    else {
+        navigator.app.backHistory()
+    }
+}, false);
+
+*/
 
 function onDeviceReady() {
 	console.log("opening database");
@@ -22,6 +34,24 @@ function onDeviceReady() {
 /*	     db.transaction(getCategories, transaction_error, populateDB_success); */
     	};
 }
+
+
+	$(document).ready(function () {
+	    $(document).ajaxStart(function () { showProgress() }).ajaxStop(function () { hideProgress() });
+	});
+	function showProgress() {
+		$.mobile.showPageLoadingMsg("f");	
+	}
+	function hideProgress() {
+		$.mobile.hidePageLoadingMsg();	
+	}
+	jQuery.fn.center = function () {
+	    this.css("position", "absolute");
+	    this.css("top", ($(window).height() - this.height()) / 2 + $(window).scrollTop() + "px");
+	    this.css("left", ($(window).width() - this.width()) / 2 + $(window).scrollLeft() + "px");
+	    return this;
+	}
+
 
 function onBodyLoad(){
 	readystatus = null;
