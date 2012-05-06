@@ -27,7 +27,11 @@ var userEmailFound = false;
 var usremail;
 var usrpasswordemail;
 // var currentwebid;
-
+var lastCategoryCode;
+var lastSubCategoryCode;
+var categoryDescription;
+var subcategoryDescription;
+var categoryid = '';
 
 function transaction_error(tx, error) {
 	$('#busy').hide();
@@ -340,4 +344,155 @@ function getExpensesEJ(tx) {
 	  alert( "Η πιστοποίηση χρήστη απέτυχε. Ελέγξτε την σύνδεση σας στο Internet: " + textStatus );
 	});
  }  		
+ 
+  function listCategories() {
+  	$('#category_description').val('');
+    db.transaction(getCategories, transaction_error, populateDB_success);
+ }
+
+ function getCategories(tx) {
+	var sql = "select * from category where type = 'E'";
+	tx.executeSql(sql, [], getCategories_success, transaction_error);
+ }
+ 
+  function getCategories_success(tx, results) {
+ 
+    var len = results.rows.length;
+    $('#categoryList').empty();
+    $('#categoryList').listview('refresh');
+
+	     for (var i=0; i<len; i++)
+	    	{
+	    	var category = results.rows.item(i);
+//	    	alert('category.code ' + category.code);
+	    	$('#categoryList').append('<li><a href="javascript:categorydialog(' + category.code + ')" data-rel="dialog" data-transition="pop">' + category.elDescription + '</a></li>');
+	    	}
+ 	     $('#categoryList').listview('refresh');
+ 	    
+ }
+ 
+  function newExpenseCategory() {
+  	categoryDescription = $('#category_description').val();
+  	if (categoryDescription == '') 
+		{alert('Δώστε περιγραφή της κατηγορίας');}
+	else
+  		{db.transaction(addExpenseCategory, transaction_error, populateDB_success);};
+//	showForm();
+ }
+
+ function addExpenseCategory(tx) {
+	$('#busy').show();
+	getLastCategory();
+ }
+ 
+ function getLastCategory() {
+    db.transaction(getlastCategories, transaction_error, populateDB_success);
+ }
+ 
+ function getlastCategories(tx) {
+	var sql = "SELECT code FROM category  where type = 'E' ORDER BY code DESC LIMIT 1";
+	tx.executeSql(sql, [], getlastCategories_success, transaction_error);
+ }
+ 
+  function getlastCategories_success(tx, results) {
+    var len = results.rows.length;
+	if (len == 0)
+		{lastCategoryCode = '00'}
+	else
+		{
+	     for (var i=0; i<len; i++)
+	    	{
+	    	var lastcategory = results.rows.item(i);
+	    	lastCategoryCode = lastcategory.code;
+	    	}
+ 	    }
+
+	var lastCategoryCodeN = parseInt(lastCategoryCode,10);
+	var newCategoryCodeN = lastCategoryCodeN + 1;
+	var newCategoryCode = newCategoryCodeN.toString();
+//	alert(newCategoryCode);
+	if (lastCategoryCodeN < 9) {newCategoryCode = '0' + newCategoryCode};
+    tx.executeSql("INSERT INTO category (code,type,enDescription, elDescription) VALUES ('"+newCategoryCode+"','E','','"+categoryDescription+"')");
+//    $.mobile.changePage( "#categories", { transition: "slideup"} );
+    listCategories();
+ }
+ 
+ function categorydialog(catid) {
+	categoryid = catid;
+	if (categoryid < 10) {categoryid = '0' + categoryid};
+	$.mobile.changePage( "#categorydialog", { role: 'dialog', transition: "slideup"} );
+ }
+
+  function listSubCategories() {
+  	$('#subCategory_description').val('');
+    db.transaction(getSubCategories, transaction_error, populateDB_success);
+ }
+
+ function getSubCategories(tx) {
+	var sql = "select * from subcategory where type = 'E' and categorycode = '"+ categoryid +"'";
+	alert(sql);
+	tx.executeSql(sql, [], getSubCategories_success, transaction_error);
+ }
+ 
+  function getSubCategories_success(tx, results) {
+ 
+    var len = results.rows.length;
+    $('#subCategoryList').empty();
+    $('#subCategoryList').listview('refresh');
+
+	     for (var i=0; i<len; i++)
+	    	{
+	    	var subcategory = results.rows.item(i);
+	    	$('#subCategoryList').append('<li><a href="#index" data-rel="dialog" data-transition="pop">' + subcategory.elDescription + '</a></li>');
+	    	}
+ 	     $('#subCategoryList').listview('refresh');
+ 	    
+ }
+ 
+  function newExpenseSubCategory() {
+  	subcategoryDescription = $('#subCategory_description').val();
+  	if (subcategoryDescription == '') 
+		{alert('Δώστε περιγραφή της υποκατηγορίας');}
+	else
+  		{db.transaction(addExpenseSubCategory, transaction_error, populateDB_success);};
+//	showForm();
+ }
+
+ function addExpenseSubCategory(tx) {
+	$('#busy').show();
+	getLastSubCategory();
+ }
+ 
+ function getLastSubCategory() {
+    db.transaction(getlastSubCategories, transaction_error, populateDB_success);
+ }
+ 
+ function getlastSubCategories(tx) {
+	var sql = "SELECT subcategoryCode FROM subcategory  where type = 'E' and  categorycode = '"+ categoryid +"' ORDER BY subcategoryCode DESC LIMIT 1";
+	alert(sql);
+	tx.executeSql(sql, [], getlastSubCategories_success, transaction_error);
+ }
+ 
+  function getlastSubCategories_success(tx, results) {
+    var len = results.rows.length;
+	if (len == 0)
+		{lastSubCategoryCode = '00'}
+	else
+		{
+	     for (var i=0; i<len; i++)
+	    	{
+	    	var lastsubcategory = results.rows.item(i);
+	    	lastSubCategoryCode = lastsubcategory.subcategoryCode;
+	    	}
+ 	    }
+
+	var lastSubCategoryCodeN = parseInt(lastSubCategoryCode,10);
+	var newSubCategoryCodeN = lastSubCategoryCodeN + 1;
+	var newSubCategoryCode = newSubCategoryCodeN.toString();
+	if (lastSubCategoryCodeN < 9) {newSubCategoryCode = '0' + newSubCategoryCode};
+	var sql = "INSERT INTO subcategory (categoryCode,subcategoryCode, type,enDescription, elDescription) VALUES ('"+categoryid+"', '"+newSubCategoryCode+"','E','','"+subcategoryDescription+"')";
+	alert(sql);
+    tx.executeSql(sql);
+    listSubCategories();
+ }
  

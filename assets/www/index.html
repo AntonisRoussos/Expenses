@@ -178,7 +178,7 @@
 			<div data-role="content">
 					<a href="index.html" data-role="button">Επαναλαμβανόμενα έξοδα</a>
 					<a href="index.html" data-role="button">Προυπολογισμός μήνα</a>
-					<a href="index.html" data-role="button">Κατηγορίες εξόδων</a>
+					<a href="#categories" data-role="button">Κατηγορίες εξόδων</a>
 					<a href="index.html" data-role="button">Κατηγορίες εσόδων</a>
 					<a href="index.html" data-role="button">Εφεδρεία αρχείων</a>
 					<a href="index.html" data-role="button">Ανάκτηση αρχείων</a>
@@ -314,8 +314,8 @@
 		
 					<h2>Στοιχεία χρήστη στο web</h2>
 	
-  				    <div data-role="fieldcontain" class="ui-hide-label">
-						<label for="user_id">email χρήστη:</label>
+ 				    <div data-role="fieldcontain" class="ui-hide-label">
+ 						<label for="user_id">email χρήστη:</label>
 						<input type="email" id="user_id" name="userid" value="" placeholder="Δώστε email web ..."><br>
 					</div>
 				    <div data-role="fieldcontain" class="ui-hide-label">
@@ -335,6 +335,70 @@
 
 	</div><!-- /userProfile -->
 
+
+	<div data-role="page" id="categories"> 
+
+		<!-- div class="ui-body ui-body-b" -->
+
+			<div data-role="header" data-position="fixed" data-id="menu">
+				<h1>Έξοδα</h1>
+				<a href="#settings" data-icon="gear" class="ui-btn-right">Ρυθμίσεις</a>
+				<a href="#information" data-icon="back" class="ui-btn-left" data-rel="back">Πίσω</a>
+			</div><!-- /header -->
+
+			<div data-role="content">
+
+		    	<div id="viewCategories">
+					
+ 				    <div data-role="fieldcontain" class="ui-hide-label">
+						<input type="text" id="category_description"  maxlength="30" name="categoryDescription" placeholder="Εισάγετε νέα κατηγορία εξόδων ...." data-theme="d" />
+				  		<input id="exp_category_submit" type="submit" value="Καταχώρηση" onClick="newExpenseCategory()" data-theme ="f"/>
+					</div>
+					<div class="type-index" data-theme="c" data-dividertheme="b">
+							<ul data-role="listview" id="categoryList"></ul>
+					</div>
+
+				</div><!-- /views -->
+			</div><!-- /content -->
+
+	</div>
+
+	<div data-role="page" id="categorydialog"> 
+	
+			<div data-role="content"> 
+				<a href="#subCategories" data-role="button">Εισαγωγή υποκατηγοριών</a>
+				<a href="#editCategory" data-role="button">Αλλαγή</a>
+				<a href="javascript:deleteCategory()" data-role="button">Διαγραφή</a>
+				<a href="#categories" data-role="button" data-rel="back">Πίσω</a>
+			</div>
+	</div>
+
+	<div data-role="page" id="subCategories"> 
+
+		<!-- div class="ui-body ui-body-b" -->
+
+			<div data-role="header" data-position="fixed" data-id="menu">
+				<h1>Έξοδα</h1>
+				<a href="#settings" data-icon="gear" class="ui-btn-right">Ρυθμίσεις</a>
+				<a href="#categories" data-icon="back" class="ui-btn-left" data-rel="back">Πίσω</a>
+			</div><!-- /header -->
+
+			<div data-role="content">
+
+		    	<div id="viewSubCategories">
+					
+ 				    <div data-role="fieldcontain" class="ui-hide-label">
+						<input type="text" id="subCategory_description"  maxlength="30" name="subCategoryDescription" placeholder="Εισάγετε νέα υποκατηγορία εξόδων ...." data-theme="d" />
+				  		<input id="exp_subcategory_submit" type="submit" value="Καταχώρηση" onClick="newExpenseSubCategory()" data-theme ="f"/>
+					</div>
+					<div class="type-index" data-theme="c" data-dividertheme="b">
+							<ul data-role="listview" id="subCategoryList"></ul>
+					</div>
+
+				</div><!-- /views -->
+			</div><!-- /content -->
+
+	</div>
 
 
 <!--jqplot -->
