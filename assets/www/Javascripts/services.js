@@ -469,7 +469,7 @@ function getExpensesEJ(tx) {
  
  function getlastSubCategories(tx) {
 	var sql = "SELECT subcategoryCode FROM subcategory  where type = 'E' and  categorycode = '"+ categoryid +"' ORDER BY subcategoryCode DESC LIMIT 1";
-	alert(sql);
+//	alert(sql);
 	tx.executeSql(sql, [], getlastSubCategories_success, transaction_error);
  }
  
@@ -491,7 +491,7 @@ function getExpensesEJ(tx) {
 	var newSubCategoryCode = newSubCategoryCodeN.toString();
 	if (lastSubCategoryCodeN < 9) {newSubCategoryCode = '0' + newSubCategoryCode};
 	var sql = "INSERT INTO subcategory (categoryCode,subcategoryCode, type,enDescription, elDescription) VALUES ('"+categoryid+"', '"+newSubCategoryCode+"','E','','"+subcategoryDescription+"')";
-	alert(sql);
+//	alert(sql);
     tx.executeSql(sql);
     listSubCategories();
  }

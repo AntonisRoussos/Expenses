@@ -8,6 +8,8 @@ var lenCategory;
 var subcategory;
 var readystatus = null;
 var nowtime;
+var expenseCategory;
+var wcategoryCode;
  
 document.addEventListener("deviceready", onDeviceReady, false);
 
@@ -31,7 +33,6 @@ function onDeviceReady() {
     	{}
     else
     	{db.transaction(populateDB, transaction_error, populateDB_success);
-/*	     db.transaction(getCategories, transaction_error, populateDB_success); */
     	};
 }
 
@@ -62,7 +63,8 @@ function onBodyLoad(){
 	$('#expense_date').trigger('datebox', {'method':'set', 'value':today});
 //	$('#expense_amount').keypad();
 //	$('#expense_amount').keypad('show');
-//	$('.Selectview').change(function() {viewExpenses()});
+//	$('.Selectview').change(function() {viewExpenses()}); 
+	$('#expense_category').change(function() {db.transaction(fillSubCategories, transaction_error, populateDB_success);});
 	$('.Selectview').change(function() {$('#information').trigger('pageshow');});
 //	$('.Selectview').change(function() {$('#info').trigger('click');});
 	$('#information').on('pageshow',function(event, ui){viewExpenses();});
@@ -239,6 +241,8 @@ function populateDB(tx) {
 		"elDescription VARCHAR(30), " +
 		"PRIMARY KEY (categoryCode, subcategoryCode, type))";
     tx.executeSql(sql);
+
+    db.transaction(fillCategories, transaction_error, populateDB_success); 
 }
 
  function newExpense() {
@@ -258,10 +262,11 @@ function populateDB(tx) {
     var originaldate = $('input:[name*="date"]').val();
     date = originaldate.substring(6,10) + "/" + originaldate.substring(3,5) + "/" + originaldate.substring(0,2);
 	category = $("#expense_category").val();
+	subCategory = $("#expense_subcategory").val();
 	method = $("#expense_method").val();
 	$('#busy').show();
-//    tx.executeSql("INSERT INTO expense (amount, dateOccured, category, subcategory, type, method, webid, commiteDateTime, sync) VALUES ("+amount+",'"+date+"','"+category+"', '0101', 'E', '"+method+"', '', DATETIME('NOW'),'')");
-    tx.executeSql("INSERT INTO expense (amount, dateOccured, category, subcategory, type, method, commiteDateTime, sync) VALUES ("+amount+",'"+date+"','"+category+"', '0101', 'E', '"+method+"', DATETIME('NOW'),'')");
+//    tx.executeSql("INSERT INTO expense (amount, dateOccured, category, subcategory, type, method, webid, commiteDateTime, sync) VALUES ("+amount+",'"+date+"','"+category+"', '"+subCategory+"', 'E', '"+method+"', '', DATETIME('NOW'),'')");
+    tx.executeSql("INSERT INTO expense (amount, dateOccured, category, subcategory, type, method, commiteDateTime, sync) VALUES ("+amount+",'"+date+"','"+category+"', '"+subCategory+"', 'E', '"+method+"', DATETIME('NOW'),'')");
  }
  
  function deleteExpensesAll() {
@@ -272,19 +277,73 @@ function populateDB(tx) {
  	tx.executeSql('DROP TABLE IF EXISTS expense');
  }
  
- function getCategories(tx) {
- 	tx.executeSql('SELECT * FROM CATEGORY WHERE CODE<> "06"', [], getCategories_success, transaction_error);
+ function fillCategories(tx) {
+	var sql = "SELECT * FROM category where type = 'E'";
+ 	tx.executeSql(sql, [], fillCategories_success, transaction_error);
  }
  
-function getCategories_success(tx, results) {
-    var len = results.rows.length;
-	console.log("category table: " + len + " rows found.");
+function fillCategories_success(tx, results) {
+	var len = results.rows.length;
+	$('#expense_category').empty();
+	if (len > 0)
+	{
     for (var i=0; i<len; i++){
-        console.log("Row = " + i + " code = " + results.rows.item(i).code + " category =  " + results.rows.item(i).elDescription);
 	   	var category = results.rows.item(i);
+	   	if (i== 0) 
+	   		{
+	   		expenseCategory = category.code;
+	   		$('#expense_category').prop("selectedIndex", expenseCategory - 1);
+	   		};
 		$('#expense_category').append('<option value="' + category.code + '">' + category.elDescription + '</option>');
-    }
-    readystatus = 'Y';
+    };
+	$('#expense_category').val(expenseCategory).attr('selected', true).siblings('option').removeAttr('selected');
+	$('#expense_category').selectmenu("refresh", true);
+	wcategoryCode = $('#expense_category').val();
+	$('#CategoryField').show();
+    db.transaction(fillSubCategories, transaction_error, populateDB_success); 
+	}
+	else
+	{
+	alert('Καταχωρήστε κατηγορίες εξόδων στις ρυθμίσεις');
+	$('#CategoryField').hide();
+	$('#subCategoryField').hide();
+	};
+//	retrieveSubCategories();
+//    readystatus = 'Y';
+ }
+
+// function retrieveSubCategories() {
+//    db.transaction(fillSubCategories, transaction_error, populateDB_success); 
+// }
+
+ function fillSubCategories(tx) {
+	var sql = 'SELECT * FROM subcategory where type = "E" and categoryCode = "'+$('#expense_category').val()+'"';
+//	alert(sql);
+ 	tx.executeSql(sql, [], fillSubCategories_success, transaction_error);
+ }
+ 
+function fillSubCategories_success(tx, results) {
+	var len = results.rows.length;
+	$('#expense_subcategory').empty();
+//	alert(len);
+	if (len > 0)
+	{
+	var expensesubCategory;
+    for (var i=0; i<len; i++){
+	   	var SubCategory = results.rows.item(i);
+	   	if (i== 0) 
+	   		{
+	   		expensesubCategory = SubCategory.subcategoryCode;
+	   		$('#expense_subcategory').prop("selectedIndex", expensesubCategory - 1);
+	   		};
+		$('#expense_subcategory').append('<option value="' + SubCategory.subcategoryCode + '">' + SubCategory.elDescription + '</option>');
+    };
+	$('#expense_subcategory').val(expensesubCategory).attr('selected', true).siblings('option').removeAttr('selected');
+	$('#expense_subcategory').selectmenu("refresh", true);
+	$('#subCategoryField').show();
+	}
+	else
+	{$('#subCategoryField').hide()};
  }
 
  function isNumber(n) {

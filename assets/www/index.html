@@ -75,17 +75,17 @@
 					<label for="expense_amount">Ποσό:</label>
 					<input type="number" id="expense_amount" class="amount" name="amount" /><br>
 		
-					<label for="expense_category" class="select">Είδος Εξόδου:</label>
-					<select name="category" id="expense_category">
-						<option value="01">Super Market</option>
-						<option value="02">Εμφάνιση</option>
-						<option value="03">Σπίτι</option>
-						<option value="04">Οχήματα</option>
-						<option value="05">Οικογένεια</option>
-						<option value="06">Προσωπικά</option>
-						<option value="07">Διασκέδαση</option>
-						<option value="08">Ιατρικά</option>
-					</select>
+			    	<div id="CategoryField">
+						<label for="expense_category" class="select">Κατηγορία Εξόδου:</label>
+						<select name="Category" id="expense_category">
+						</select>
+					</div>
+
+			    	<div id="subCategoryField">
+						<label for="expense_category" class="select">Υποκατηγορία Εξόδου:</label>
+						<select name="subCategory" id="expense_subcategory">
+						</select>
+					</div>
 
 					<label for="expense_method" class="select">Τρόπος πληρωμής:</label>
 					<select name="method" id="expense_method">

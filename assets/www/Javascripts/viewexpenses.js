@@ -198,8 +198,11 @@ function getExpenses(tx) {
 
  function showForm(type) {
     $('#views').hide();
-	if (type == 'expense')
-     	{$('#newExpenseform').show();}
+	if (type == 'expense') {
+		$('#newExpenseform').show();
+		db.transaction(fillCategories, transaction_error, populateDB_success); 
+		}
+     	
     else
     	{$('#newIncomeform').show();}
  }
