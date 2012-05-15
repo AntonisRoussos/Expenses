@@ -65,6 +65,7 @@ function onBodyLoad(){
 //	$('#expense_amount').keypad('show');
 //	$('.Selectview').change(function() {viewExpenses()}); 
 	$('#expense_category').change(function() {db.transaction(fillSubCategories, transaction_error, populateDB_success);});
+	$('#expense_categoryU').change(function() {db.transaction(fillSubCategoriesU, transaction_error, populateDB_success);});
 	$('.Selectview').change(function() {$('#information').trigger('pageshow');});
 //	$('.Selectview').change(function() {$('#info').trigger('click');});
 	$('#information').on('pageshow',function(event, ui){viewExpenses();});
@@ -308,24 +309,16 @@ function fillCategories_success(tx, results) {
 	$('#CategoryField').hide();
 	$('#subCategoryField').hide();
 	};
-//	retrieveSubCategories();
-//    readystatus = 'Y';
  }
-
-// function retrieveSubCategories() {
-//    db.transaction(fillSubCategories, transaction_error, populateDB_success); 
-// }
 
  function fillSubCategories(tx) {
 	var sql = 'SELECT * FROM subcategory where type = "E" and categoryCode = "'+$('#expense_category').val()+'"';
-//	alert(sql);
  	tx.executeSql(sql, [], fillSubCategories_success, transaction_error);
  }
  
 function fillSubCategories_success(tx, results) {
 	var len = results.rows.length;
 	$('#expense_subcategory').empty();
-//	alert(len);
 	if (len > 0)
 	{
 	var expensesubCategory;
@@ -350,4 +343,4 @@ function fillSubCategories_success(tx, results) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
- // function checkTableExists_success(tx, results) {lenCategory = results.rows.length; alert(lenCategory);}
+ 

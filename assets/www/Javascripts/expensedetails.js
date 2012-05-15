@@ -3,6 +3,8 @@ var expenseamount;
 var expensecategory;
 var	expensemethod;
 var	expensedate;
+var expensesubcategoryCodeU;
+var expensecodeU;
 
  function getUrlVars() {
 	    var vars = [], hash;
@@ -39,7 +41,7 @@ function showexpense() {
 
  function showExpense(tx) {
 	var sql;
-	sql = "select x.amount, x.dateOccured, y.elDescription, x.subcategory, x.method, x.type from expense x, category y where x.sn = " + expenseid + " and x.category = y.code and x.type=y.type";
+	sql = "select x.amount, x.dateOccured, y.elDescription catDescr, z.elDescription subcatDescr, x.method, x.type from expense x, category y, subcategory z where x.sn = " + expenseid + " and x.category = y.code and x.subcategory = z.subcategoryCode and x.category = z.categoryCode and x.type=y.type";
 	tx.executeSql(sql, [], showExpense_success, transaction_error);
  }
  
@@ -59,8 +61,8 @@ function showexpense() {
 	else
 		{etype = 'Έσοδο'};
 	$('#showamount').empty().append('Ποσό :' + expense.amount);
-	$('#showcategory').empty().append('Κατηγορία :' + expense.elDescription);
-	$('#showsubcategory').empty().append('Υποκατηγορία :' + expense.subcategory);
+	$('#showcategory').empty().append('Κατηγορία :' + expense.catDescr);
+	$('#showsubcategory').empty().append('Υποκατηγορία :' + expense.subcatDescr);
 	$('#showdate').empty().append('Ημερομηνία :' + expense.dateOccured);
 	$('#showmethod').empty().append('Τρόπος :' + emethod);
 	$('#showtype').empty().append('Είδος :' + etype);
@@ -99,40 +101,30 @@ function showexpense() {
 //	$('#busy').hide();
     var len = results.rows.length;
     for (var i=0; i<len; i++)
-    	{var expense = results.rows.item(i);};
+    	{var expense = results.rows.item(i);
+    	expensecodeU = expense.category;
+    	expensesubcategoryCodeU = expense.subcategory;
+    	};
+    db.transaction(fillCategoriesU, transaction_error, populateDB_success); 
     expenseamount = expense.amount;
 	expensecategory = expense.category;
 	expenseelDescription = expense.elDescription;
 	expensemethod = expense.method;
     expensedate = expense.dateOccured.substring(8,10) + "/" + expense.dateOccured.substring(5,7) + "/" + expense.dateOccured.substring(0,4);
 	$('#exp_amount').val(expenseamount);
-//	$('#exp_category').remove();
+//	$('#expense_category').remove();
 //	a= "<option value='"+expensecategory+"'>"+expenseelDescription+"</option>";
-//	$('#exp_category').children().remove();
-//	$('#exp_category').empty();
-//	$('#exp_category').append(a);
-	$('#exp_category').prop("selectedIndex", expensecategory - 1);
-	$('#exp_category').append('<option value="01">Super Market</option>');
-	$('#exp_category').append('<option value="02">Εμφάνιση</option>');
-	$('#exp_category').append('<option value="03">Σπίτι</option>');
-	$('#exp_category').append('<option value="04">Οχήματα</option>');
-	$('#exp_category').append('<option value="05">Οικογένεια</option>');
-	$('#exp_category').append('<option value="06">Προσωπικά</option>');
-	$('#exp_category').append('<option value="07">Διασκέδαση</option>');
-	$('#exp_category').append('<option value="08">Ιατρικά</option>');
-//	$("#exp_category option[value='05']").attr("selected", "selected");
-//	$('#exp_category').val(expensecategory);
-	$('#exp_category').val(expensecategory).attr('selected', true).siblings('option').removeAttr('selected');
-	$('#exp_category').selectmenu("refresh", true);
+//	$('#expense_category').children().remove();
+//	$('#expense_category').empty();
+//	$('#expense_category').append(a);
 	$('#exp_method').prop("selectedIndex", expensemethod - 1);
 	$('#exp_method').append('<option value="M">Μετρητά</option>');
 	$('#exp_method').append('<option value="C">Κάρτα</option>');
 	$('#exp_method').val(expensemethod).attr('selected', true).siblings('option').removeAttr('selected');
 	$('#exp_method').selectmenu("refresh", true);
 	$('#exp_date').val(expensedate);
-	
-    
     $('#editExpenseform').show();
+//	show_Expense_all();
 //	$.mobile.changePage( "#editExpense", { transition: "slideup"} );
 //	$('#editamount').empty().append('<input type="number" id="expense_amount" class="amount" name="amount" value='+expense.amount+'>'); 
  }
@@ -151,11 +143,12 @@ function showexpense() {
   function editExpenseUpdateFields(tx) {
     var originaldate = $('#exp_date').val();
     var date = originaldate.substring(6,10) + "/" + originaldate.substring(3,5) + "/" + originaldate.substring(0,2);
-	var category = $('#exp_category').val();
+	var category = $('#expense_categoryU').val();
+	var subcategory = $('#expense_subcategoryU').val();
 	var method = $('#exp_method').val();
 	$('#busy').show();
 	var sql;
-	sql = "update expense set amount ="+expenseamount+",dateOccured='"+date+"',category='"+category+"',method='"+method+"',commiteDateTime=DATETIME('NOW'),sync=''  where sn="+expenseid+"";
+	sql = "update expense set amount ="+expenseamount+",dateOccured='"+date+"',category='"+category+"',subcategory='"+subcategory+"',method='"+method+"',commiteDateTime=DATETIME('NOW'),sync=''  where sn="+expenseid+"";
     tx.executeSql(sql);
  }
  
@@ -165,3 +158,71 @@ function showexpense() {
  	return fields;
  }
  
+  function fillCategoriesU(tx) {
+	var sql = "SELECT * FROM category where type = 'E'";
+ 	tx.executeSql(sql, [], fillCategoriesU_success, transaction_error);
+ }
+ 
+function fillCategoriesU_success(tx, results) {
+	$('#expense_categoryU').empty();
+	$('#expense_categoryU').prop("selectedIndex", expensecodeU - 1);
+	var len = results.rows.length;
+	if (len > 0)
+	{
+    for (var i=0; i<len; i++){
+	   	var category = results.rows.item(i);
+		$('#expense_categoryU').append('<option value="' + category.code + '">' + category.elDescription + '</option>');
+    };
+	$('#expense_categoryU').val(expensecodeU).attr('selected', true).siblings('option').removeAttr('selected');
+	$('#expense_categoryU').selectmenu("refresh", true);
+	wcategoryCode = $('#expense_categoryU').val();
+	$('#CategoryFieldU').show();
+    db.transaction(fillSubCategoriesU, transaction_error, populateDB_success); 
+	}
+	else
+	{
+	alert('Καταχωρήστε κατηγορίες εξόδων στις ρυθμίσεις');
+	$('#CategoryFieldU').hide();
+	$('#subCategoryFieldU').hide();
+	};
+ }
+
+ function fillSubCategoriesU(tx) {
+	var sql = 'SELECT * FROM subcategory where type = "E" and categoryCode = "'+$('#expense_categoryU').val()+'"';
+ 	tx.executeSql(sql, [], fillSubCategoriesU_success, transaction_error);
+ }
+ 
+function fillSubCategoriesU_success(tx, results) {
+	$('#expense_subcategoryU').empty();
+	var selectedsubcategory;
+	if (expensesubcategoryCodeU != '') {
+		if ($('#expense_categoryU').val() == expensecodeU) { 
+			selectedsubcategory = expensesubcategoryCodeU;
+			$('#expense_subcategoryU').prop("selectedIndex", expensesubcategoryCodeU - 1)}
+		else {
+			selectedsubcategory = 1;
+			$('#expense_subcategoryU').prop("selectedIndex", 0)};
+		$('#subCategoryFieldU').show();
+		}
+	else {
+		selectedsubcategory = 1;
+		$('#expense_subcategoryU').prop("selectedIndex", 0);
+		$('#subCategoryFieldU').hide();
+		};
+	var len = results.rows.length;
+	if (len > 0)
+	{
+    for (var i=0; i<len; i++){
+	   	var SubCategory = results.rows.item(i);
+		$('#expense_subcategoryU').append('<option value="' + SubCategory.subcategoryCode + '">' + SubCategory.elDescription + '</option>');
+    };
+	$('#expense_subcategoryU').val(selectedsubcategory).attr('selected', true).siblings('option').removeAttr('selected');
+	$('#expense_subcategoryU').selectmenu("refresh", true);
+	$('#subCategoryFieldU').show();
+	}
+	else
+	{$('#subCategoryFieldU').hide()};
+ }
+ 
+//function show_Expense_all() {
+//} 

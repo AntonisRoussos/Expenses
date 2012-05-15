@@ -1,7 +1,7 @@
 var db;
-//var serviceURL = "http://rememberlist.heroku.com/expenses/";
+var serviceURL = "http://rememberlist.heroku.com/expenses/";
 //var serviceURL = "http://localhost:3000/expenses/";
-var serviceURL = "http://10.0.2.2:3000/expenses/";
+//var serviceURL = "http://10.0.2.2:3000/expenses/";
 var mobiledata = [];
 var webdata = [];
 var webreply = [];
@@ -430,7 +430,7 @@ function getExpensesEJ(tx) {
 
  function getSubCategories(tx) {
 	var sql = "select * from subcategory where type = 'E' and categorycode = '"+ categoryid +"'";
-	alert(sql);
+//	alert(sql);
 	tx.executeSql(sql, [], getSubCategories_success, transaction_error);
  }
  
