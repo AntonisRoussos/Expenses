@@ -496,3 +496,38 @@ function getExpensesEJ(tx) {
     listSubCategories();
  }
  
+  function editCategoryDescription() {
+    db.transaction(getCategoryDescription, transaction_error, populateDB_success);
+ }
+
+ function getCategoryDescription(tx) {
+	var sql = "select * from category where code = '"+ categoryid +"'";
+	tx.executeSql(sql, [], getCategoryDescription_success, transaction_error);
+ }
+ 
+  function getCategoryDescription_success(tx, results) {
+    var len = results.rows.length;
+	for (var i=0; i<len; i++) {
+    	 var category = results.rows.item(i);
+		 $('#category_description_edit').val(category.elDescription);
+	};
+	$('#editcategoryDesc').show();
+ }
+ 
+ function updateCategoryDescription() {
+  	var CategoryDescription = $('#category_description_edit').val();
+ 	if (CategoryDescription == '') 
+		{alert('Κενή περγραφή κατηγορίας');}
+	else
+		{	
+  	  	db.transaction(editCategoryDescriptionField, transaction_error, populateDB_success);
+  		};
+  }
+ 
+   function editCategoryDescriptionField(tx) {
+  	var CategoryDescription = $('#category_description_edit').val();
+	$('#busy').show();
+	var sql = "update category set elDescription ='"+CategoryDescription+"' where code = '"+ categoryid +"'";
+    tx.executeSql(sql);
+    $.mobile.changePage( "#categories", {transition: "slideup"} );
+ }

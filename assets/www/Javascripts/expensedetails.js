@@ -41,7 +41,8 @@ function showexpense() {
 
  function showExpense(tx) {
 	var sql;
-	sql = "select x.amount, x.dateOccured, y.elDescription catDescr, z.elDescription subcatDescr, x.method, x.type from expense x, category y, subcategory z where x.sn = " + expenseid + " and x.category = y.code and x.subcategory = z.subcategoryCode and x.category = z.categoryCode and x.type=y.type";
+	//sql = "select x.amount, x.dateOccured, y.elDescription catDescr, z.elDescription subcatDescr, x.method, x.type from expense x, category y, subcategory z where x.sn = " + expenseid + " and x.category = y.code and x.subcategory = z.subcategoryCode and x.category = z.categoryCode and x.type=y.type";
+	sql = "select x.amount, x.dateOccured, y.elDescription catDescr, z.elDescription subcatDescr, x.method, x.type from expense x LEFT JOIN category y ON x.category = y.code and x.type = y.type LEFT JOIN subcategory z ON x.category = z.categoryCode and x.subcategory = z.subcategorycode where x.sn = " + expenseid + "";
 	tx.executeSql(sql, [], showExpense_success, transaction_error);
  }
  
@@ -145,6 +146,7 @@ function showexpense() {
     var date = originaldate.substring(6,10) + "/" + originaldate.substring(3,5) + "/" + originaldate.substring(0,2);
 	var category = $('#expense_categoryU').val();
 	var subcategory = $('#expense_subcategoryU').val();
+	if (subcategory == null) {subcategory = ''};
 	var method = $('#exp_method').val();
 	$('#busy').show();
 	var sql;

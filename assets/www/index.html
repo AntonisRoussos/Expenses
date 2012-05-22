@@ -70,10 +70,14 @@
 		
 				<!-- form id="expense" onSubmit="JavaScript:handleClick()" -->
 		
+				   	<fieldset class="ui-grid-a">
+				  		<div class="ui-block-f"><input id="expense_submit" type="submit" value="Καταχώρηση" onClick="newExpense()" data-theme ="f"/></div>
+			    	</fieldset>
+
 					<!-- label for="expense_amount" class="ui-hidden-accessible" --><!-- /label -->
 					<!-- input type="text" id="expense_amount"  maxlength="8" name="amount" placeholder="Ποσό ...." size="8" data-theme="d" / -->
-					<label for="expense_amount">Ποσό:</label>
-					<input type="number" id="expense_amount" class="amount" name="amount" /><br>
+					<!-- label for="expense_amount" --><!-- /label -->
+					<input type="number" id="expense_amount" class="amount" name="amount" placeholder="Ποσό ...." />
 		
 			    	<div id="CategoryField">
 						<label for="expense_category" class="select">Κατηγορία Εξόδου:</label>
@@ -94,14 +98,10 @@
 					</select>
 
 		
-					<div data-role="fieldcontain">
-						<label for="expense_date">Ημερομηνία:</label><input name="date" type="date" id="expense_date" data-role="datebox" data-options='{"mode": "datebox", "disableManualInput": true}' />
-					</div>
+					<!-- div data-role="fieldcontain" -->
+						<label for="expense_date">Ημερομηνία:</label><input name="date" type="date" id="expense_date" data-role="datebox" data-options='{"mode": "datebox", "disableManualInput": true, "useInline":true, "useInlineHideInput":true}' />
+					<!-- /div -->
 		
-				   	<fieldset class="ui-grid-a">
-				  		<div class="ui-block-f"><input id="expense_submit" type="submit" value="Καταχώρηση" onClick="newExpense()" data-theme ="f"/></div>
-			    	</fieldset>
-					
 					<div id="busy"/>Καταχώρηση...</div>
 		
 				</div><!-- /newExpenseform -->
@@ -379,6 +379,37 @@
 				<a href="javascript:deleteCategory()" data-role="button">Διαγραφή</a>
 				<a href="#categories" data-role="button" data-rel="back">Πίσω</a>
 			</div>
+	</div>
+
+	<div data-role="page" id="editCategory"> 
+
+		<!-- div class="ui-body ui-body-b" -->
+
+			<div data-role="header" data-position="fixed" data-id="menu">
+				<h1>Έξοδα</h1>
+				<a href="#settings" data-icon="gear" class="ui-btn-right">Ρυθμίσεις</a>
+				<a href="#categories" data-icon="back" class="ui-btn-left" data-rel="back">Πίσω</a>
+			</div><!-- /header -->
+
+			<div data-role="content">
+	
+		    	<div id="editcategoryDesc">
+		
+					<h2>Διόρθωση κατηγορίας</h2>
+	
+ 				    <div data-role="fieldcontain" class="ui-hide-label">
+ 						<label for="category_description_edit">Κατηγορία:</label>
+						<input type="text" id="category_description_edit" name="category_description_edit" value=""><br>
+					</div>
+			        <fieldset class="ui-grid-a">
+				  		<div class="ui-block-f"><input id="category_description_submit" type="submit" value="Καταχώρηση" onClick="updateCategoryDescription()" data-theme ="f"/></div>
+			    	</fieldset>
+			        
+					
+				</div><!-- /editcategoryDesc -->
+
+			</div><!-- /content -->
+
 	</div>
 
 	<div data-role="page" id="subCategories"> 

@@ -71,8 +71,8 @@ function onBodyLoad(){
 	$('#information').on('pageshow',function(event, ui){viewExpenses();});
 	$('#homepage').on('pageshow',function(event, ui){showForm('expense');});
 	$('#editExpense').on('pageshow',function(event, ui){editexpense();});
-	$('#editCategory').on('pageshow',function(event, ui){editcategory();});
 	$('#userProfile').on('pageshow',function(event, ui){registerUser();});
+	$('#editCategory').on('pageshow',function(event, ui){editCategoryDescription();});
 	$('#categories').on('pageshow',function(event, ui){listCategories();});
 	$('#subCategories').on('pageshow',function(event, ui){listSubCategories();});
 	$("#toggleView").empty().append('<img src="./Stylesheets/images/analysis.png">');
@@ -264,6 +264,7 @@ function populateDB(tx) {
     date = originaldate.substring(6,10) + "/" + originaldate.substring(3,5) + "/" + originaldate.substring(0,2);
 	category = $("#expense_category").val();
 	subCategory = $("#expense_subcategory").val();
+	if (subCategory == null) {subCategory = ''};
 	method = $("#expense_method").val();
 	$('#busy').show();
 //    tx.executeSql("INSERT INTO expense (amount, dateOccured, category, subcategory, type, method, webid, commiteDateTime, sync) VALUES ("+amount+",'"+date+"','"+category+"', '"+subCategory+"', 'E', '"+method+"', '', DATETIME('NOW'),'')");
