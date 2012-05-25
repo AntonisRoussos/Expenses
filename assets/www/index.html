@@ -374,7 +374,7 @@
 	<div data-role="page" id="categorydialog"> 
 	
 			<div data-role="content"> 
-				<a href="#subCategories" data-role="button">Εισαγωγή υποκατηγοριών</a>
+				<a href="#subCategories" data-role="button">Υποκατηγορίες</a>
 				<a href="#editCategory" data-role="button">Αλλαγή</a>
 				<a href="javascript:deleteCategory()" data-role="button">Διαγραφή</a>
 				<a href="#categories" data-role="button" data-rel="back">Πίσω</a>
@@ -411,7 +411,7 @@
 			</div><!-- /content -->
 
 	</div>
-
+	
 	<div data-role="page" id="subCategories"> 
 
 		<!-- div class="ui-body ui-body-b" -->
@@ -439,6 +439,36 @@
 
 	</div>
 
+	<div data-role="page" id="editSubCategory"> 
+
+		<!-- div class="ui-body ui-body-b" -->
+
+			<div data-role="header" data-position="fixed" data-id="menu">
+				<h1>Έξοδα</h1>
+				<a href="#settings" data-icon="gear" class="ui-btn-right">Ρυθμίσεις</a>
+				<a href="#categories" data-icon="back" class="ui-btn-left" data-rel="back">Πίσω</a>
+			</div><!-- /header -->
+
+			<div data-role="content">
+	
+		    	<div id="editSubcategoryDesc">
+		
+					<h2>Διόρθωση υποκατηγορίας</h2>
+	
+ 				    <div data-role="fieldcontain" class="ui-hide-label">
+ 						<label for="subcategory_description_edit">Υποκατηγορία:</label>
+						<input type="text" id="subcategory_description_edit" name="subcategory_description_edit" value=""><br>
+					</div>
+			        <fieldset class="ui-grid-a">
+				  		<div class="ui-block-f"><input id="subcategory_description_submit" type="submit" value="Καταχώρηση" onClick="updateSubCategoryDescription()" data-theme ="f"/></div>
+			    	</fieldset>
+			        
+					
+				</div><!-- /editSubcategoryDesc -->
+
+			</div><!-- /content -->
+
+	</div>
 
 <!--jqplot -->
         <script class="include" type="text/javascript" src="Javascripts/jquery.jqplot.min.js"></script>

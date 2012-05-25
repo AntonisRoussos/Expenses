@@ -32,6 +32,7 @@ var lastSubCategoryCode;
 var categoryDescription;
 var subcategoryDescription;
 var categoryid = '';
+var subcategoryid = '';
 
 function transaction_error(tx, error) {
 	$('#busy').hide();
@@ -443,7 +444,11 @@ function getExpensesEJ(tx) {
 	     for (var i=0; i<len; i++)
 	    	{
 	    	var subcategory = results.rows.item(i);
-	    	$('#subCategoryList').append('<li><a href="#index" data-rel="dialog" data-transition="pop">' + subcategory.elDescription + '</a></li>');
+			var txt1 = "'";
+			var n1=txt1.concat(subcategory.subcategoryCode).concat(txt1);
+			var n2=txt1.concat(subcategory.elDescription).concat(txt1);
+	    	var a = '<li><a href="javascript:subcategoryEdit('+ n1 +','+ n2 + ')">' + subcategory.elDescription + '</a></li>';
+	    	$('#subCategoryList').append('<li><a href="javascript:subcategoryEdit('+ n1 +','+ n2 + ')">' + subcategory.elDescription + '</a></li>');
 	    	}
  	     $('#subCategoryList').listview('refresh');
  	    
@@ -491,7 +496,6 @@ function getExpensesEJ(tx) {
 	var newSubCategoryCode = newSubCategoryCodeN.toString();
 	if (lastSubCategoryCodeN < 9) {newSubCategoryCode = '0' + newSubCategoryCode};
 	var sql = "INSERT INTO subcategory (categoryCode,subcategoryCode, type,enDescription, elDescription) VALUES ('"+categoryid+"', '"+newSubCategoryCode+"','E','','"+subcategoryDescription+"')";
-//	alert(sql);
     tx.executeSql(sql);
     listSubCategories();
  }
@@ -531,3 +535,28 @@ function getExpensesEJ(tx) {
     tx.executeSql(sql);
     $.mobile.changePage( "#categories", {transition: "slideup"} );
  }
+
+ function subcategoryEdit(subcategoryCode, subcategoryelDescription) {
+	subcategoryid = subcategoryCode;
+	$('#subcategory_description_edit').val(subcategoryelDescription);
+	$.mobile.changePage( "#editSubCategory", {transition: "slideup"} );
+ }
+
+ function updateSubCategoryDescription() {
+  	var SubCategoryDescription = $('#subcategory_description_edit').val();
+ 	if (SubCategoryDescription == '') 
+		{alert('Κενή περγραφή υποκατηγορίας');}
+	else
+		{	
+  	  	db.transaction(editSubCategoryDescriptionField, transaction_error, populateDB_success);
+  		};
+  }
+ 
+   function editSubCategoryDescriptionField(tx) {
+  	var SubCategoryDescription = $('#subcategory_description_edit').val();
+	$('#busy').show();
+	var sql = "update subcategory set elDescription ='"+SubCategoryDescription+"' where subcategorycode = '"+ subcategoryid +"'";
+    tx.executeSql(sql);
+    $.mobile.changePage( "#subCategories", {transition: "slideup"} );
+ }
+ 
