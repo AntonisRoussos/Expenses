@@ -9,8 +9,6 @@ var toggleViewStats;
 var YTDstart;
 var MTDstart;
 var WTDstart;
-var param = '';
-var currentCategoryDescription;
 
 // var scroll = new iScroll('wrapper', { vScrollbar: false, hScrollbar:false, hScroll: false });
 
@@ -91,33 +89,26 @@ function getExpenses(tx) {
 	    $('#chart1').show();
  		$('#toggleView').hide();
  		$('#toggleViewStats').show();
-		if (param == '') {
- 			sql = "select y.elDescription a, sum(x.amount) b from expense x, category y where x.category = y.code and x.type=y.type and " + timeStr + " group by x.category"}
- 		else {
- 			sql = "select y.elDescription a, sum(x.amount) b from expense x, subcategory y where x.category = '"+ param +"' and x.category = y.categorycode and x.subcategory = y.subcategoryCode and x.type=y.type and " + timeStr + " group by x.category, x.subcategory"};
-// 		alert(sql);
+ 		sql = "select y.elDescription a, sum(x.amount) b from expense x, category y where x.category = y.code and " + timeStr + " group by x.category";
 		tx.executeSql(sql, [], getExpensesStats_success, transaction_error);
 		}
- 	else {
+ 	else
+ 		{
 		$('.type-index').show();
 	    $('#expenseList').show();
 	    $('#chart1').hide();
  		$('#toggleViewStats').hide();
  		$('#toggleView').show();
- 		if (toggleView == "perDay") {
- 			sql = "select x.sn, x.amount, x.dateOccured, y.elDescription, x.category, x.subcategory from expense x, category y where x.category = y.code and x.type=y.type and " + timeStr + "order by x.dateOccured desc, x.category";
+ 		if (toggleView == "perDay")
+ 			{sql = "select x.sn, x.amount, x.dateOccured, y.elDescription, x.category, x.subcategory from expense x, category y where x.category = y.code and x.type=y.type and " + timeStr + "order by x.dateOccured desc, x.category";
 			tx.executeSql(sql, [], getExpensesList_success, transaction_error)}
-		else {
- 			if (toggleView == "perCategory") {
-				if (param == '') {
-	 				sql = "select x.sn, x.amount, x.dateOccured, y.elDescription, x.category, x.subcategory from expense x, category y where x.category = y.code and x.type=y.type and " + timeStr + "order by x.category, x.dateOccured desc"}
-	 			else {
-	 				sql = "select x.sn, x.amount, x.dateOccured, y.elDescription, x.category, x.subcategory from expense x, subcategory y where x.category = '"+ param +"' and x.type=y.type and x.category = y.categorycode and x.subcategory = y.subcategoryCode and " + timeStr + "order by x.category, x.subcategory,x.dateOccured desc"};
-//				alert(sql);
-				tx.executeSql(sql, [], getExpensesList_success, transaction_error);
-				};
-		};
-	};
+		else
+			{
+ 			if (toggleView == "perCategory")
+	 			{sql = "select x.sn, x.amount, x.dateOccured, y.elDescription, x.category, x.subcategory from expense x, category y where x.category = y.code and x.type=y.type and " + timeStr + "order by x.category, x.dateOccured desc";
+				tx.executeSql(sql, [], getExpensesList_success, transaction_error)}
+			}
+ 		};
  }
 
  function getExpensesStats_success(tx, results) {
@@ -191,7 +182,7 @@ function getExpenses(tx) {
     var len = results.rows.length;
     $('#expenseList').empty();
 
-	if (toggleView == "perDay") 
+	if (toggleView == "perDay")
 		 {listperDay(results, len);}
 	else
 	     {listperCategory(results, len);}
@@ -225,8 +216,7 @@ function getExpenses(tx) {
 	    	var expense = results.rows.item(i);
 	    	if (expense.dateOccured != wdateOccured)
 	    		{
-    			 var round_subtotal = Math.round(subtotal*100)/100;
-		    	 if (wdateOccured != '9999/99/99') {$('#expenseList').append('<li class="lightblue"> ' + round_subtotal + '€ : Σύνολο Ημέρας</li>'); $('#expenseList').listview('refresh');};
+		    	 if (wdateOccured != '9999/99/99') {$('#expenseList').append('<li class="lightblue"> ' + subtotal + '€ : Σύνολο Ημέρας</li>'); $('#expenseList').listview('refresh');};
 //		    	 if (wdateOccured != '9999/99/99') {$('#expenseList').append('<li>' + subtotal + '€ : Σύνολο Ημέρας</li>');};
 		    	 subtotal = 0;
 	    		 wdateOccured = expense.dateOccured;
@@ -242,52 +232,29 @@ function getExpenses(tx) {
     		total = total + expense.amount;
     		if (i == len - 1) 
     			{
-    			var round_subtotal = Math.round(subtotal*100)/100;
-    			var round_total = Math.round(total*100)/100;
-    			$('#expenseList').append('<li>' + round_subtotal + '€ : Σύνολο Ημέρας</li>');
-    			$('#expenseList').append('<li>' + round_total + '€ : Γενικό Σύνολο</li>');
+    			$('#expenseList').append('<li>' + subtotal + '€ : Σύνολο Ημέρας</li>');
+    			$('#expenseList').append('<li>' + total + '€ : Γενικό Σύνολο</li>');
     			};
  	    	}
-    	param = '';
-	    $('#expenseList').listview('refresh');
+ 	     $('#expenseList').listview('refresh');
  	    
  }
  
   function listperCategory(results, len) {
  	     var wcategory = 99;
- 	     var wsubcategory = 99;
  		 var subtotal = 0;
  		 var total = 0;
-//      	 if (param != '' && len>0) {$('#expenseList').append('<li data-icon="back" data-rel="back" data-theme="e"><a href="javascript:showCategoryInfo()">' + currentCategoryDescription + '</a></li>')};
-      	 if (param != '') {$('#expenseList').append('<li data-icon="back" data-theme="e"><a href="javascript:showCategoryInfo()">' + currentCategoryDescription + '</a></li>')};
-	     for (var i=0; i<len; i++) {
+	     for (var i=0; i<len; i++)
+	    	{
 	    	var expense = results.rows.item(i);
-			if (param == '') {
-		    	if (expense.category != wcategory) {
-			    	 if (wcategory != 99) {
-	 	    			var round_subtotal = Math.round(subtotal*100)/100;
-			    	 	$('#expenseList').append('<li>' + round_subtotal + '€ : Σύνολο Κατηγορίας</li>')};
-			    	 subtotal = 0;
-			    	 wcategory = expense.category;
-	    	 		 var txt1 = "'";
-					 var n1=txt1.concat(expense.category).concat(txt1);
-		     		 var n2=txt1.concat(expense.elDescription).concat(txt1);
-					 currentCategoryDescription = expense.elDescription;
-		    		 $('#expenseList').append('<li data-theme="b"><a href="javascript:expensesbySubcategory(' + n1 +','+ n2 + ')" data-role="list-divider">' + expense.elDescription + '</li>');
-			   		 param = '';
+	    	if (expense.category != wcategory)
+	    		{
+		    	 if (wcategory != 99) {$('#expenseList').append('<li>' + subtotal + '€ : Σύνολο Κατηγορίας</li>');};
+		    	 subtotal = 0;
+		    	 wcategory = expense.category;
+	    		 $('#expenseList').append('<li data-role="list-divider">' + expense.elDescription + '</li>');
+//				 $('#expenseList').listview('refresh');
 	   			}
-	   		};
-			if (param != '') {
-		    	if (expense.subcategory != wsubcategory){
-			    	 if (wsubcategory != 99) {
-	 	    			var round_subtotal = Math.round(subtotal*100)/100;
-			    	 	$('#expenseList').append('<li>' + round_subtotal + '€ : Σύνολο Υποκατηγορίας</li>');};
-			    	 subtotal = 0;
-			    	 wsubcategory = expense.subcategory;
-		    		 $('#expenseList').append('<li data-role="list-divider">' + expense.elDescription + '</li>');
-	   			}
-	   		};
-	   		
 		    var dateArray = expense.dateOccured.split("/");
 			var formattedDate = new Date(dateArray[0], dateArray[1]-1, dateArray[2]);
 			stringformattedDate = formattedDate.format("dddd, d mmmm, yyyy").toString();
@@ -295,28 +262,14 @@ function getExpenses(tx) {
 //	    	$('#expenseList').append('<li><a href="#expensedialog?id=' + expense.sn + '" data-rel="dialog" data-transition="pop">' + expense.amount + '€    ' + stringformattedDate + ' </a></li>');
     		subtotal = subtotal + expense.amount;
     		total = total + expense.amount;
-    		if (i == len - 1) {
-    			var round_subtotal = Math.round(subtotal*100)/100;
-    			var round_total = Math.round(total*100)/100;
-				if (param == '') {$('#expenseList').append('<li>' + round_subtotal + '€ : Σύνολο Κατηγορίας</li>')}
-				else {$('#expenseList').append('<li>' + round_subtotal + '€ : Σύνολο Υποκατηγορίας</li>')};
-    			$('#expenseList').append('<li>' + round_total + '€ : Γενικό Σύνολο</li>');
-			};
-    	};
- 	    $('#expenseList').listview('refresh');
+    		if (i == len - 1) 
+    			{
+    			$('#expenseList').append('<li>' + subtotal + '€ : Σύνολο Κατηγορίας</li>');
+    			$('#expenseList').append('<li>' + total + '€ : Γενικό Σύνολο</li>');
+    			};
+ 	    	}
+ 	     $('#expenseList').listview('refresh');
   }
-  
-  function expensesbySubcategory(id, catDescr) {
-	param = id;
-    currentCategoryDescription = catDescr;
-//	$.mobile.changePage( "#information", {transition: "slideup"} );
-	viewExpenses();
- }
-  
-  function showCategoryInfo() {
-	param = '';
-	viewExpenses();
- }
   
   /* Commented out 2-live breakdown 
 

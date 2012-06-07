@@ -118,6 +118,7 @@ function showexpense() {
 //	$('#expense_category').children().remove();
 //	$('#expense_category').empty();
 //	$('#expense_category').append(a);
+	$('#exp_method').empty();
 	$('#exp_method').prop("selectedIndex", expensemethod - 1);
 	$('#exp_method').append('<option value="M">Μετρητά</option>');
 	$('#exp_method').append('<option value="C">Κάρτα</option>');
