@@ -13,7 +13,6 @@ var wcategoryCode;
  
 document.addEventListener("deviceready", onDeviceReady, false);
 
-/*
 document.addEventListener("backbutton", function(e){
     if($.mobile.activePage.is('#homepage')){
         e.preventDefault();
@@ -23,8 +22,6 @@ document.addEventListener("backbutton", function(e){
         navigator.app.backHistory()
     }
 }, false);
-
-*/
 
 function onDeviceReady() {
 	console.log("opening database");
@@ -66,8 +63,14 @@ function onBodyLoad(){
 //	$('.Selectview').change(function() {viewExpenses()}); 
 	$('#expense_category').change(function() {db.transaction(fillSubCategories, transaction_error, populateDB_success);});
 	$('#expense_categoryU').change(function() {db.transaction(fillSubCategoriesU, transaction_error, populateDB_success);});
-	$('.Selectview').change(function() {$('#information').trigger('pageshow');});
+	$('#expense_view').change(function() {$('#information').trigger('pageshow');});
 //	$('.Selectview').change(function() {$('#info').trigger('click');});
+/*	$("#information").on('pageshow',function(){
+	   var myselect = $("select#view");
+	   myselect[0].selectedIndex = 2;
+	   myselect.selectmenu("refresh");
+	});
+*/
 	$('#information').on('pageshow',function(event, ui){viewExpenses();});
 	$('#homepage').on('pageshow',function(event, ui){showForm('expense');});
 	$('#editExpense').on('pageshow',function(event, ui){editexpense();});
@@ -75,8 +78,21 @@ function onBodyLoad(){
 	$('#editCategory').on('pageshow',function(event, ui){editCategoryDescription();});
 	$('#categories').on('pageshow',function(event, ui){listCategories();});
 	$('#subCategories').on('pageshow',function(event, ui){listSubCategories();});
-	$("#toggleView").empty().append('<img src="./Stylesheets/images/analysis.png">');
+	$("#toggleViewStats").val('BarChart');
+	$("#toggleViewStats").empty().append('<img src="./Stylesheets/images/chart-pie.png">');
+	$('#toggleViewStats').toggle(
+		function() {
+		  $("#toggleViewStats").val('PieChart');
+		  viewExpenses();
+		  $("#toggleViewStats").empty().append('<img src="./Stylesheets/images/bar-chart.png">');
+		}, 
+		function() {
+		  $("#toggleViewStats").val('BarChart');
+		  viewExpenses();
+		  $("#toggleViewStats").empty().append('<img src="./Stylesheets/images/chart-pie.png">');
+		});
 	$("#toggleView").val('perDay');
+	$("#toggleView").empty().append('<img src="./Stylesheets/images/analysis.png">');
 //	$("#toggleView").empty().append('Click για Έξοδα / Kατηγορία');
 //	$("#toggleView").empty().append('<a href="#" data-icon="home" data-iconpos="notext" data-direction="reverse"></a>');
 	$('#toggleView').toggle(
@@ -89,19 +105,6 @@ function onBodyLoad(){
 		  $("#toggleView").val('perDay');
 		  viewExpenses();
 		  $("#toggleView").empty().append('<img src="./Stylesheets/images/analysis.png">');
-		});
-	$("#toggleViewStats").empty().append('<img src="./Stylesheets/images/chart-pie.png">');
-	$("#toggleViewStats").val('BarChart');
-	$('#toggleViewStats').toggle(
-		function() {
-		  $("#toggleViewStats").val('PieChart');
-		  viewExpenses();
-		  $("#toggleViewStats").empty().append('<img src="./Stylesheets/images/bar-chart.png">');
-		}, 
-		function() {
-		  $("#toggleViewStats").val('BarChart');
-		  viewExpenses();
-		  $("#toggleViewStats").empty().append('<img src="./Stylesheets/images/chart-pie.png">');
 		});
 /*		
 

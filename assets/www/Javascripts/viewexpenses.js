@@ -135,46 +135,48 @@ function getExpenses(tx) {
     $.jqplot.config.enablePlugins = true;
 //    $('#newExpenseform').hide();
     $('#chart1').empty();
-	if (toggleViewStats == "BarChart")
-		{
-		    /* Bar chart */
-		    var plot1 = $.jqplot('chart1', data, {
-			    title: 'Κατηγορίες Εξόδων',
-		        seriesDefaults:{
-		            renderer:$.jqplot.BarRenderer,
-		            pointLabels: { show: true, location: 'e', edgeTolerance: -15 },
-		            // Rotate the bar shadow as if bar is lit from top right.
-		            shadowAngle: 135,
-		            // Here's where we tell the chart it is oriented horizontally.
-		            rendererOptions: {
-		                barDirection: 'horizontal'
-		            				}
-		        },
-		        axes: {
-		            yaxis: {
-		                renderer: $.jqplot.CategoryAxisRenderer,
-		            		}
-		        	},
-		    });
-		}
-		else
-		{
-		    /* Pie chart */
-		    var plot1 = jQuery.jqplot ('chart1', datastat, 
-		    { 
-		      seriesDefaults: {
-		        // Make this a pie chart.
-		        renderer: jQuery.jqplot.PieRenderer, 
-		        rendererOptions: {
-		          diameter: 200,
-		          // Put data labels on the pie slices.
-		          // By default, labels show the percentage of the slice.
-		          showDataLabels: true
-		        }
-		      }, 
-		      legend: { show:true, location: 'e' }
-		    });
-		}    
+	if (len > 0) {
+		if (toggleViewStats == "BarChart")
+			{
+			    /* Bar chart */
+			    var plot1 = $.jqplot('chart1', data, {
+				    title: 'Κατηγορίες Εξόδων',
+			        seriesDefaults:{
+			            renderer:$.jqplot.BarRenderer,
+			            pointLabels: { show: true, location: 'e', edgeTolerance: -15 },
+			            // Rotate the bar shadow as if bar is lit from top right.
+			            shadowAngle: 135,
+			            // Here's where we tell the chart it is oriented horizontally.
+			            rendererOptions: {
+			                barDirection: 'horizontal'
+			            				}
+			        },
+			        axes: {
+			            yaxis: {
+			                renderer: $.jqplot.CategoryAxisRenderer,
+			            		}
+			        	},
+			    });
+			}
+			else
+			{
+			    /* Pie chart */
+			    var plot1 = jQuery.jqplot ('chart1', datastat, 
+			    { 
+			      seriesDefaults: {
+			        // Make this a pie chart.
+			        renderer: jQuery.jqplot.PieRenderer, 
+			        rendererOptions: {
+			          diameter: 200,
+			          // Put data labels on the pie slices.
+			          // By default, labels show the percentage of the slice.
+			          showDataLabels: true
+			        }
+			      }, 
+			      legend: { show:true, location: 'e' }
+			    });
+			}    
+	}
  }
 
  function getExpensesList_success(tx, results) {
@@ -226,7 +228,7 @@ function getExpenses(tx) {
 	    	if (expense.dateOccured != wdateOccured)
 	    		{
     			 var round_subtotal = Math.round(subtotal*100)/100;
-		    	 if (wdateOccured != '9999/99/99') {$('#expenseList').append('<li class="lightblue"> ' + round_subtotal + '€ : Σύνολο Ημέρας</li>'); $('#expenseList').listview('refresh');};
+		    	 if (wdateOccured != '9999/99/99') {$('#expenseList').append('<li> ' + round_subtotal + '€ : Σύνολο Ημέρας</li>'); $('#expenseList').listview('refresh');};
 //		    	 if (wdateOccured != '9999/99/99') {$('#expenseList').append('<li>' + subtotal + '€ : Σύνολο Ημέρας</li>');};
 		    	 subtotal = 0;
 	    		 wdateOccured = expense.dateOccured;

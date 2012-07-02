@@ -1,15 +1,19 @@
 var db;
-var serviceURL = "http://rememberlist.heroku.com/expenses/";
+//var serviceURL = "http://rememberlist.heroku.com/expenses/";
 //var serviceURL = "http://localhost:3000/expenses/";
-//var serviceURL = "http://10.0.2.2:3000/expenses/";
+var serviceURL = "http://10.0.2.2:3000/expenses/";
 var mobiledata = [];
 var webdata = [];
+var CopiedData  = [];
 var webreply = [];
+var copyreply = [];
 var webdataFormatted = [];
+var CopieddataFormatted = [];
 var mobileinserteddata = [];
 var mobIds = [];
 var wcounter;
 var counterOfDataAddedtoWeb;
+var counterOfDataAddedCopiedfromWeb;
   var trxtype;
   var trxdatetime;
   var sn;
@@ -19,6 +23,14 @@ var counterOfDataAddedtoWeb;
   var subcategory;
   var ttype;
   var trxmethod;
+var categoryCode;
+var categoryType;
+var categoryenDesciption;
+var categoryelDesciption;
+var scategoryCode;
+var subcategoryType;
+var subcategoryenDesciption;
+var subcategoryelDesciption;
 var webindex;
 var mobid;
 var webid;
@@ -50,6 +62,11 @@ function synchronizeWithWeb() {
     db.transaction(getUser, transaction_error, populateDB_success);
 //	synchronizeFromWeb();
 //    if (mobileinserteddata !== []) {send_inserted_data_to_web();};
+}
+
+function copyFromWeb() {
+	parm = 2;
+    db.transaction(getUser, transaction_error, populateDB_success);
 }
 
 function getExpensesEJ(tx) {
@@ -131,7 +148,7 @@ function getExpensesEJ(tx) {
 	  if (remainder == 6) {subcategory = value};
 	  if (remainder == 7) {ttype = value};
 	  if (remainder == 8) {trxmethod = value};
-//    	console.log(remainder);
+//    	console.log(remainder); 
 //    	console.log(trxtype);
 	  if (remainder == 8 && trxtype == 'A')
 	        {webdataFormatted.push([trxtype, trxdatetime, sn, amount, dateoccured, category, subcategory, ttype, trxmethod]);
@@ -286,8 +303,10 @@ function getExpensesEJ(tx) {
 	if (parm == 1)
 		{$('#editUserProfile').show()}
 	else
-		if (userEmailFound)
-			{db.transaction(getExpensesEJ, transaction_error, populateDB_success);}
+		if (userEmailFound) {
+			if (parm == 0) {db.transaction(getExpensesEJ, transaction_error, populateDB_success)};
+			if (parm == 2) {db.transaction(CopyExpenses, transaction_error, populateDB_success)}
+			}
 		else
 			{alert( "Παρακαλώ κάντε καταχώρηση χρήστη στο web.")}
  }
@@ -552,11 +571,147 @@ function getExpensesEJ(tx) {
   		};
   }
  
-   function editSubCategoryDescriptionField(tx) {
+ function editSubCategoryDescriptionField(tx) {
   	var SubCategoryDescription = $('#subcategory_description_edit').val();
 	$('#busy').show();
-	var sql = "update subcategory set elDescription ='"+SubCategoryDescription+"' where subcategorycode = '"+ subcategoryid +"'";
+	var sql = "update subcategory set elDescription ='"+SubCategoryDescription+"' where categoryCode = '"+ categoryid +"' and subcategorycode = '"+ subcategoryid +"'";
     tx.executeSql(sql);
     $.mobile.changePage( "#subCategories", {transition: "slideup"} );
+ }
+ 
+ function copyExpenses(tx) {
+    CopiedData = [];
+//  Request data from web server
+	 var request = $.ajax({
+	  	url: serviceURL + "copy_to_mobile",
+	  	type: 'POST',
+	  	dataType: 'json',
+	  	data: {user: usremail, password: usrpassword},
+	beforeSend : function(xhr){
+       xhr.setRequestHeader("Accept", "application/json")
+     },
+		success:function(CopiedData) {
+					console.log("Copied from web");
+					console.log(CopiedData);
+					if (CopiedData.length > 1)
+						{var responsecode = CopiedData.shift();}
+					else
+						{var responsecode = CopiedData};
+				 	if (responsecode == 0) {
+					 	webindex = jQuery.inArray("expenses", CopiedData);
+					 	if (webindex != -1) {
+						 	expensesreply = CopiedData.splice(0,webindex);
+							copy_from_web_expenses(CopiedData);
+						 	webindex = jQuery.inArray("categories", CopiedData);
+						 	if (webindex != -1) {
+							 	categoriesreply = CopiedData.splice(0,webindex);
+								copy_from_web_categories(CopiedData);
+							}
+						 	webindex = jQuery.inArray("subcategories", CopiedData);
+						 	if (webindex != -1) {
+							 	subcategoriesreply = CopiedData.splice(0,webindex);
+								copy_from_web_subcategories(CopiedData);
+							}
+					 	}
+						else
+							{alert( "Ο συγχρονισμός τελείωσε με επιτυχία.")};
+						}
+					else
+						{alert( "Ο χρήστης δεν πιστοποιήθηκε. Διορθώστε το email ή/και το password και ξαναπροσπαθήστε.")}
+				} 
+	 	});
+ 	request.fail(function(jqXHR, textStatus) {
+	  alert( "Ο συγχρονισμός απέτυχε. Ελέγξτε την σύνδεση σας στο Internet: " + textStatus );
+	});
+//	console.log(mobiledata);
+ }
+ 
+  function copy_from_web_expenses(CopiedData){
+	CopiedData.shift();
+	CopieddataFormatted=[];
+	counterOfDataAddedCopiedfromWeb = 0;
+//   	console.log(CopiedData);
+	$.each(CopiedData, function(index, value) { 
+	  var remainder = index % 8;
+	  if (remainder == 0) {sn = value};
+	  if (remainder == 1) {amount = value};
+	  if (remainder == 2) {dateoccured = value};
+	  if (remainder == 3) {category = value};
+	  if (remainder == 4) {subcategory = value};
+	  if (remainder == 5) {ttype = value};
+	  if (remainder == 6) {trxmethod = value};
+	  if (remainder == 7) {trxdatetime = value};
+	  if (remainder == 7)
+	        {CopieddataFormatted.push([trxdatetime, sn, amount, dateoccured, category, subcategory, ttype, trxmethod]);
+			counterOfDataAddedCopiedfromWeb++;
+//	        	console.log(CopieddataFormatted);
+	        };
+	});
+  	db.transaction(copyAllExpenses, transaction_error, populateDB_success);
+ } 
+   
+  function copyAllExpenses(tx) {
+	$.each(CopieddataFormatted, function(index, value) { 
+		var sql = "INSERT INTO expense (amount, dateOccured, category, subcategory, type, method, webid, commiteDateTime, sync) " + 
+		"VALUES ("+CopieddataFormatted[index][1]+",'"+CopieddataFormatted[index][2]+"','"+CopieddataFormatted[index][3]+"', '"+CopieddataFormatted[index][4]+"', '"+CopieddataFormatted[index][5]+"', '"+CopieddataFormatted[index][6]+"', "+CopieddataFormatted[index][0]+", '"+CopieddataFormatted[index][7]+"','S')";};
+		tx.executeSql(sql, [], querySuccess, transaction_error);	
+	});
+ }
+
+  function copy_from_web_categories(CopiedData){
+	CopiedData.shift();
+	CopieddataFormatted=[];
+	counterOfDataAddedCopiedfromWeb = 0;
+//   	console.log(CopiedData);
+	$.each(CopiedData, function(index, value) { 
+	  var remainder = index % 4;
+	  if (remainder == 0) {categoryCode = value};
+	  if (remainder == 1) {categoryType = value};
+	  if (remainder == 2) {categoryenDescription = value};
+	  if (remainder == 3) {categoryelDescription = value};
+	  if (remainder == 3)
+	        {CopieddataFormatted.push([categoryCode, categoryType, categoryenDescription, categoryelDescription]);
+			counterOfDataAddedCopiedfromWeb++;
+//	        	console.log(CopieddataFormatted);
+	        };
+	});
+  	db.transaction(copyAllCategories, transaction_error, populateDB_success);
+ } 
+   
+  function copyAllCategories(tx) {
+	$.each(CopieddataFormatted, function(index, value) { 
+		var sql = "INSERT INTO category (code, type, enDescription, elDescription) " + 
+		"VALUES ("+CopieddataFormatted[index][0]+",'"+CopieddataFormatted[index][1]+"','"+CopieddataFormatted[index][2]+"', '"+CopieddataFormatted[index][3])";};
+		tx.executeSql(sql, [], querySuccess, transaction_error);	
+	});
+ }
+ 
+   function copy_from_web_subcategories(CopiedData){
+	CopiedData.shift();
+	CopieddataFormatted=[];
+	counterOfDataAddedCopiedfromWeb = 0;
+//   	console.log(CopiedData);
+	$.each(CopiedData, function(index, value) { 
+	  var remainder = index % 5;
+	  if (remainder == 0) {scategoryCode = value};
+	  if (remainder == 1) {subcategoryCode = value};
+	  if (remainder == 2) {subcategoryType = value};
+	  if (remainder == 3) {subcategoryenDescription = value};
+	  if (remainder == 4) {subcategoryelDescription = value};
+	  if (remainder == 4)
+	        {CopieddataFormatted.push([scategoryCode, subcategoryCode, subcategoryType, subcategoryenDescription, subcategoryelDescription]);
+			counterOfDataAddedCopiedfromWeb++;
+//	        	console.log(CopieddataFormatted);
+	        };
+	});
+  	db.transaction(copyAllCategories, transaction_error, populateDB_success);
+ } 
+   
+  function copyAllCategories(tx) {
+	$.each(CopieddataFormatted, function(index, value) { 
+		var sql = "INSERT INTO subcategory (categoryCode, subcategoryCode, type, enDescription, elDescription) " + 
+		"VALUES ("+CopieddataFormatted[index][0]+",'"+CopieddataFormatted[index][1]+"','"+CopieddataFormatted[index][2]+"', '"+CopieddataFormatted[index][3])"','"+CopieddataFormatted[index][4])";};
+		tx.executeSql(sql, [], querySuccess, transaction_error);	
+	});
  }
  
