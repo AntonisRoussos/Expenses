@@ -236,7 +236,7 @@ function getExpensesEJ(tx) {
  function querySuccess(tx, results) {
  // check push only on additions and only one final call send_inserted ......
 // 	alert(results.insertId);
-    mobIds.push(results.insertId);
+    mobIds.push(results.insertId); 
 // 	mobileinserteddata.push(expense.webid, results.insertId );
     wcounter++;
     console.log(wcounter);
@@ -625,7 +625,7 @@ function getExpensesEJ(tx) {
 						copy_from_web_expenses(expensesreply);
 						copy_from_web_categories(categoriesreply);
 						copy_from_web_subcategories(subcategoriesreply);
-						alert( "Ο συγχρονισμός τελείωσε με επιτυχία.");
+// 						alert( "Ο συγχρονισμός τελείωσε με επιτυχία.");
 					}
 					else
 						{alert( "Ο χρήστης δεν πιστοποιήθηκε. Διορθώστε το email ή/και το password και ξαναπροσπαθήστε.")}
@@ -663,12 +663,36 @@ function getExpensesEJ(tx) {
    
   function copyAllExpenses(tx) {
   	console.log(CopiedExpensesFormatted);
+	wcounter = 0;
+	counterOfDataAddedtoWeb = 0;
+	mobIds = [];
+	mobileinserteddata = [];
 	$.each(CopiedExpensesFormatted, function(index, value) { 
 		var sql = "INSERT INTO expense (amount, dateOccured, category, subcategory, type, method, webid, commiteDateTime, sync) "+ 
 		"VALUES ('"+CopiedExpensesFormatted[index][1]+"','"+CopiedExpensesFormatted[index][2]+"','"+CopiedExpensesFormatted[index][3]+"', '"+CopiedExpensesFormatted[index][4]+"', '"+CopiedExpensesFormatted[index][5]+"', '"+CopiedExpensesFormatted[index][6]+"', "+CopiedExpensesFormatted[index][0]+", '"+CopiedExpensesFormatted[index][7]+"','S')";
-	    tx.executeSql(sql);
+//	    tx.executeSql(sql);
+		wcounter = 0;
+		counterOfDataAddedtoWeb++;
+		tx.executeSql(sql, [], fillArrayWithIds, transaction_error);	
 	});
  }
+
+ function fillArrayWithIds(tx, results) {
+ // check push only on additions and only one final call send_inserted ......
+// 	alert(results.insertId);
+    mobIds.push(results.insertId); 
+    wcounter++;
+//    console.log(wcounter);
+//    console.log(mobIds);
+ 	if (wcounter == counterOfDataAddedtoWeb) 
+ 		{
+		$.each(mobIds, function(index, value) { 
+				mobileinserteddata.push(CopiedExpensesFormatted[index][0], mobIds [index]);
+		});
+	    console.log(mobileinserteddata);
+		send_inserted_data_to_web();
+	};
+}
 
   function copy_from_web_categories(categoriesreply){
 	categoriesreply.shift();
