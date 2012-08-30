@@ -221,6 +221,7 @@ function populateDB(tx) {
 			"type VARCHAR(1), " +
 			"enDescription VARCHAR(30), " +
 			"elDescription VARCHAR(30), " +
+			"synched VARCHAR(1), " +
 			"PRIMARY KEY (code, type))";
 	    tx.executeSql(sql);
 /*	
@@ -243,6 +244,7 @@ function populateDB(tx) {
 		"type VARCHAR(1), " +
 		"enDescription VARCHAR(30), " +
 		"elDescription VARCHAR(30), " +
+		"synched VARCHAR(1), " +
 		"PRIMARY KEY (categoryCode, subcategoryCode, type))";
     tx.executeSql(sql);
 

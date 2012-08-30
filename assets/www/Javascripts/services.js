@@ -3,6 +3,9 @@ var db;
 //var serviceURL = "http://localhost:3000/expenses/";
 var serviceURL = "http://10.0.2.2:3000/expenses/";
 var mobiledata = [];
+var categoryrows = [];
+var subCategoryrows = [];
+var mobiledata = [];
 var webdata = [];
 var CopiedData  = [];
 var webreply = [];
@@ -71,8 +74,33 @@ function copyFromWeb() {
     db.transaction(getUser, transaction_error, populateDB_success);
 }
 
-function getExpensesEJ(tx) {
+function getDataFromMobile(tx) {
 //  	$('#busy').show();
+	var sql = "select * from category where synched is null";
+	tx.executeSql(sql, [], retrieveCategories_success, transaction_error);
+ }
+
+
+  function retrieveCategories_success(tx, results) {
+    categoryrows = [];
+//    webdata = [];
+    var len = results.rows.length;
+    for (var i=0; i<len; i++) {
+    	var categorymob = results.rows.item(i);
+	    categoryrows.push(categorymob.code, categorymob.type, categorymob.enDescription, categorymob.elDescription);
+	    };
+	var sql = "select * from subcategory where synched is null";
+	tx.executeSql(sql, [], retrieveSubCategories_success, transaction_error);
+ }
+
+  function retrieveSubCategories_success(tx, results) {
+    subCategoryrows = [];
+//    webdata = [];
+    var len = results.rows.length;
+    for (var i=0; i<len; i++) {
+    	var subCategorymob = results.rows.item(i);
+	    subCategoryrows.push(subCategorymob.categoryCode, subCategorymob.subcategoryCode, subCategorymob.type, subCategorymob.enDescription, subCategorymob.elDescription);
+	    };
 // select uncommited changes
 	var sql = "select * from expenseej";
 	tx.executeSql(sql, [], getExpensesEJ_success, transaction_error);
@@ -92,7 +120,7 @@ function getExpensesEJ(tx) {
 	  	url: serviceURL + "synchronize_with_mobile",
 	  	type: 'POST',
 	  	dataType: 'json',
-	  	data: {user: usremail, password: usrpassword, mobiledata: mobiledata},
+	  	data: {user: usremail, password: usrpassword, categoryrows: categoryrows, subCategoryrows: subCategoryrows, mobiledata: mobiledata},
 //	    async: true,
 //	  	headers: {'Content-Type': 'application/json'},
 	beforeSend : function(xhr){
@@ -133,6 +161,11 @@ function getExpensesEJ(tx) {
   
  function update_from_web(webdata){
 //	console.log(webreply);
+//	var sql = "update category set flag = 'Y'";
+//	tx.executeSql(sql);};
+//	var sql = "update subcategory set flag = 'Y'";
+//	tx.executeSql(sql);};
+	tx.executeSql(sql, [], getSubCategories_success, transaction_error);
 	db.transaction(updateExpenseFromMobile, transaction_error, populateDB_success);
 	webdata.shift();
 	webdataFormatted=[];
@@ -259,6 +292,10 @@ function getExpensesEJ(tx) {
  function clearExpensesEJ(tx) {
 	var sql = "DELETE FROM expenseej";
 	tx.executeSql(sql);	
+	var sql = "UPDATE category set synched = 'N'";
+	tx.executeSql(sql);	
+	var sql = "UPDATE subcategory set synched = 'N'";
+	tx.executeSql(sql);	
  } 
  
  function send_inserted_data_to_web() {
@@ -306,7 +343,7 @@ function getExpensesEJ(tx) {
 		{$('#editUserProfile').show()}
 	else
 		if (userEmailFound) {
-			if (parm == 0) {db.transaction(getExpensesEJ, transaction_error, populateDB_success)};
+			if (parm == 0) {db.transaction(getDataFromMobile, transaction_error, populateDB_success)};
 			if (parm == 2) {db.transaction(clearDB, transaction_error, copyExpenses)};
 			}
 		else
